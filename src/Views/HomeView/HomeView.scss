@@ -1,0 +1,54 @@
+.HomeView {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 50vw;
+  max-width: 700px;
+  min-width: 300px;
+  margin: 0 auto;
+  padding: 2rem 0;
+  &__hero-img {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+    img {
+      width: 100%;
+      min-width: 400px;
+      height: auto;
+    }
+  }
+  &__title {
+    color: white;
+    margin: 2rem 0;
+    padding: 0;
+    text-shadow: 0 0 5px var(--color);
+  }
+  &__routes {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    width: 100%;
+  }
+  &__route {
+    text-align: center;
+    text-decoration: none;
+    width: 100%;
+    padding: .75rem;
+    font-size: 1.25rem;
+    border: none;
+    border-radius: .25rem;
+    color: white;
+    font-weight: bold;
+    border: 1px solid white;
+    cursor: pointer;
+    &:hover {
+      background: white;
+      color: var(--color);
+    }
+  }
+}

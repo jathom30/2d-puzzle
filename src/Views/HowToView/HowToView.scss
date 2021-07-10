@@ -1,0 +1,50 @@
+.HowToView {
+  &__top-bar {
+    height: calc(var(--height) * 2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  &__wrapper {
+    max-width: 75vw;
+    min-width: 300px;
+    margin: 0 auto;
+    padding: 2rem 0;
+  }
+  &__tldr {
+    background: white;
+    border-radius: .25rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: rgb(55, 17, 116);
+  }
+  &__instructions {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    margin: 1rem 0;
+  }
+  &__group {
+    background: white;
+    color: var(--color);
+    padding: 1rem;
+    border-radius: .25rem;
+  }
+  &__main {
+    font-weight: bold;
+    margin-bottom: .5rem;
+    font-size: 1.25rem;
+  }
+  &__label {
+    color: white;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  &__notes {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}

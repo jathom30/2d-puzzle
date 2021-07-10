@@ -1,0 +1,13 @@
+.BackButton {
+  color: white;
+  text-decoration: none;
+  padding: .5rem 1rem;
+  border: 1px solid white;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: .25rem;
+  &:hover {
+    background: white;
+    color: var(--color);
+  }
+}

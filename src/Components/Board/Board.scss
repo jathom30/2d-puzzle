@@ -1,0 +1,12 @@
+.Board {
+  margin: 0 auto;
+  outline: 3px solid var(--wall);
+  position: relative;
+  background: rgb(31, 26, 46);
+  overflow: hidden;
+  background-image:
+  linear-gradient(45deg, var(--darkTint) 25%, transparent 25%), 
+  linear-gradient(-45deg, var(--darkTint) 25%, transparent 25%),
+  linear-gradient(45deg, transparent 75%, var(--darkTint) 75%),
+  linear-gradient(-45deg, transparent 75%, var(--darkTint) 75%);
+}

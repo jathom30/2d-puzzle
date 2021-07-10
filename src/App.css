@@ -1,38 +1,30 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;700&display=swap');
+
+:root {
+  --height: 10px;
+  --darkTint: rgba(0,0,0,.1);
+  --color: rgb(55, 17, 116);
+  --wall: rgb(66, 63, 63);
+  --background: rgb(23, 3, 56);
+  --hero: rgb(138, 210, 238);
+  --opposite: rgb(193, 138, 238);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body, *, *:before, * :after {
+  box-sizing: border-box;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+p, h1, h2, h3, h4, h5 {
+  margin: 0;
+  padding: 0;
 }
 
-.App-header {
-  background-color: #282c34;
+html, body {
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  background: var(--background);
 }
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.App {
+  min-height: 100vh;
+  background: rgb(23, 3, 56);
+  font-family: 'Noto Sans JP', sans-serif;
 }
