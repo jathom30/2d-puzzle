@@ -26,7 +26,7 @@
   background: var(--hero);
   transition: all .2s ease;
   z-index: 1;
-  &.has-item:after {
+  &--has-item:after {
     content: '🔑';
     position: absolute;
     bottom: 0;

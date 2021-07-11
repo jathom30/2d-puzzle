@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react'
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import {
   boundsSelector,
   gridSizeAtom,
-  piecePositionAtom,
-  positionSelector,
+  pieceEntersHouseAtom,
+  pieceHasItemAtom,
   sparkSideAtom,
-  voidPositionsSelector,
   wallHolePositionAtom,
   wallHorizontalAtom,
   wallPositionSelector,
@@ -21,7 +20,7 @@ import {
   OppositeGoalPiece,
   HeroHazardPiece,
   OppositeHazardPiece,
-  SparkPiece,
+  // SparkPiece,
 } from 'Components'
 import './Board.scss'
 import { OppositePiece } from 'Components/Pieces'
@@ -37,6 +36,11 @@ export const Board = () => {
       gridSize * -1
     }px, ${gridSize * -1}px 0px`,
   }
+
+  const heroHasItem = useRecoilValue(pieceHasItemAtom('hero'))
+  const oppositeHasItem = useRecoilValue(pieceHasItemAtom('opposite'))
+  const heroInHouse = useRecoilValue(pieceEntersHouseAtom('hero'))
+  const oppositeInHouse = useRecoilValue(pieceEntersHouseAtom('opposite'))
 
   const [heroPos, setHeroPos] = usePlacePiece('character', 'hero')
   const [oppositePos, setOppositePos] = usePlacePiece('character', 'opposite')
@@ -91,21 +95,18 @@ export const Board = () => {
     >
       <WallPiece />
       <WallHolePiece />
-      <HeroPiece />
-      <OppositePiece />
-      <HeroItem />
-      <OppositeItem />
       <HeroGoalPiece />
       <OppositeGoalPiece />
+      {!heroInHouse && <HeroPiece />}
+      {!oppositeInHouse && <OppositePiece />}
+      {!heroHasItem && <HeroItem />}
+      {!oppositeHasItem && <OppositeItem />}
       <HeroHazardPiece />
       <OppositeHazardPiece />
-      <SparkPiece />
+      {/* <SparkPiece /> */}
     </div>
   )
 }
 
-// TODO: movement
-// TODO: collision detection
-// TODO: spark movement
 // TODO: Hazard tracking/movement?
 // TODO: second wall and hole?

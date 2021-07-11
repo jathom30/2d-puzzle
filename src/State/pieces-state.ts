@@ -1,12 +1,17 @@
 import { defaultPieces } from 'Config'
 import { generateSpace } from 'Helpers'
 import { atom, atomFamily, selectorFamily } from 'recoil'
-import { PositionType } from 'Types'
+import { PositionType, SideType } from 'Types'
 import { gridCountSelector, gridSizeAtom } from './board-state'
 import { wallHorizontalAtom, wallPositionSelector } from './wall-state'
 
-export const pieceHasItemAtom = atomFamily({
+export const pieceHasItemAtom = atomFamily<boolean, SideType>({
   key: 'pieceHasItem',
+  default: false,
+})
+
+export const pieceEntersHouseAtom = atomFamily<boolean, SideType>({
+  key: 'pieceEntersHouse',
   default: false,
 })
 
@@ -14,8 +19,6 @@ export const pieceEmojiAtom = atomFamily<string, string>({
   key: 'pieceEmoji',
   default: (emoji) => defaultPieces[emoji],
 })
-
-type SideType = 'hero' | 'opposite'
 
 export const positionSelector = selectorFamily<() => PositionType, SideType>({
   key: 'positionSelector',

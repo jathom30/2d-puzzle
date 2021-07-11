@@ -1,28 +1,56 @@
-import { useEffect } from 'react'
-import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { inSameSpace } from 'Helpers'
+import { useEffect, useState } from 'react'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import {
   boundsSelector,
   gridSizeAtom,
+  moveCountAtom,
+  pieceEntersHouseAtom,
+  pieceHasItemAtom,
   piecePositionAtom,
   voidPositionsSelector,
 } from 'State'
-import { PositionType } from 'Types'
+import {
+  loseConditionSelector,
+  winConditionSelector,
+} from 'State/win-lose-state'
+import { PositionType, SideType } from 'Types'
+
+type DirectionType = 'up' | 'down' | 'left' | 'right'
 
 export const useMove = () => {
-  const voidPos = useRecoilValue(voidPositionsSelector)
-  const setHeroPos = useSetRecoilState(
+  const [lastDirection, setLastDirection] = useState<DirectionType>()
+  const voidHeroPos = useRecoilValue(voidPositionsSelector('hero'))
+  const voidOppositePos = useRecoilValue(voidPositionsSelector('opposite'))
+  const setMoveCount = useSetRecoilState(moveCountAtom)
+  const [heroPos, setHeroPos] = useRecoilState(
     piecePositionAtom({ kind: 'character', side: 'hero' }),
   )
-  const setOppositePos = useSetRecoilState(
+  const heroGoalPos = useRecoilValue(
+    piecePositionAtom({ kind: 'goal', side: 'hero' }),
+  )
+  const oppositeGoalPos = useRecoilValue(
+    piecePositionAtom({ kind: 'goal', side: 'opposite' }),
+  )
+  const setHeroInHouse = useSetRecoilState(pieceEntersHouseAtom('hero'))
+  const setOppositeInHouse = useSetRecoilState(pieceEntersHouseAtom('opposite'))
+  const [oppositePos, setOppositePos] = useRecoilState(
     piecePositionAtom({ kind: 'character', side: 'opposite' }),
   )
+  const heroItemPos = useRecoilValue(
+    piecePositionAtom({ kind: 'item', side: 'opposite' }),
+  )
+  const oppositeItemPos = useRecoilValue(
+    piecePositionAtom({ kind: 'item', side: 'hero' }),
+  )
+  const setHeroHasItem = useSetRecoilState(pieceHasItemAtom('hero'))
+  const setOppositeHasItem = useSetRecoilState(pieceHasItemAtom('opposite'))
+  const winCondition = useRecoilValue(winConditionSelector)
+  const loseCondition = useRecoilValue(loseConditionSelector)
   const gridSize = useRecoilValue(gridSizeAtom)
   const bounds = useRecoilValue(boundsSelector)
 
-  const checkBounds = (
-    direction: 'up' | 'down' | 'left' | 'right',
-    prevPos: PositionType,
-  ) => {
+  const checkBounds = (direction: DirectionType, prevPos: PositionType) => {
     const { width, height } = bounds
     const { x, y } = prevPos
     switch (direction) {
@@ -40,10 +68,12 @@ export const useMove = () => {
   }
 
   const checkVoidPoints = (
-    direction: 'up' | 'down' | 'left' | 'right',
+    direction: DirectionType,
     prevPos: PositionType,
+    side: SideType,
   ) => {
     const { x, y } = prevPos
+    const voidPos = side === 'hero' ? voidHeroPos : voidOppositePos
     switch (direction) {
       case 'up':
         return !voidPos.some((pos) => pos.y === y - gridSize && pos.x === x)
@@ -58,10 +88,7 @@ export const useMove = () => {
     }
   }
 
-  const moveInDirection = (
-    direction: 'up' | 'down' | 'left' | 'right',
-    prevPos: PositionType,
-  ) => {
+  const moveInDirection = (direction: DirectionType, prevPos: PositionType) => {
     const axis = direction === 'up' || direction === 'down' ? 'y' : 'x'
     const offAxis = axis === 'x' ? 'y' : 'x'
     const increase = direction === 'down' || direction === 'right'
@@ -76,6 +103,9 @@ export const useMove = () => {
 
   useEffect(() => {
     const handleMove = (e: KeyboardEvent) => {
+      if (!(winCondition && loseCondition)) {
+        setMoveCount((prevCount) => prevCount + 1)
+      }
       const getDirection = (char: 'hero' | 'opposite') => {
         const hero = char === 'hero'
         switch (e.key) {
@@ -91,12 +121,13 @@ export const useMove = () => {
             return hero ? 'down' : 'up'
         }
       }
+      setLastDirection(getDirection('hero'))
       setHeroPos((prevPos) => {
         // check if they can move, then move
         // bounds, void spaces
         const direction = getDirection('hero')
         const isWithinBounds = checkBounds(direction, prevPos)
-        const isNotVoid = checkVoidPoints(direction, prevPos)
+        const isNotVoid = checkVoidPoints(direction, prevPos, 'hero')
         if (isWithinBounds && isNotVoid) {
           return moveInDirection(direction, prevPos)
         }
@@ -105,7 +136,7 @@ export const useMove = () => {
       setOppositePos((prevPos) => {
         const direction = getDirection('opposite')
         const isWithinBounds = checkBounds(direction, prevPos)
-        const isNotVoid = checkVoidPoints(direction, prevPos)
+        const isNotVoid = checkVoidPoints(direction, prevPos, 'opposite')
         if (isWithinBounds && isNotVoid) {
           return moveInDirection(direction, prevPos)
         }
@@ -114,5 +145,71 @@ export const useMove = () => {
     }
     document.addEventListener('keypress', handleMove)
     return () => document.removeEventListener('keypress', handleMove)
-  }, [voidPos])
+  }, [voidHeroPos, voidOppositePos])
+
+  // characters cannot move into same space as one another...
+  // ...they also will clip into each other
+  useEffect(() => {
+    if (lastDirection) {
+      if (inSameSpace(heroPos, oppositePos)) {
+        switch (lastDirection) {
+          case 'up':
+            setHeroPos((prevPos) => moveInDirection('down', prevPos))
+            setOppositePos((prevPos) => moveInDirection('up', prevPos))
+            break
+          case 'down':
+            setHeroPos((prevPos) => moveInDirection('up', prevPos))
+            setOppositePos((prevPos) => moveInDirection('down', prevPos))
+            break
+          case 'left':
+            setHeroPos((prevPos) => moveInDirection('right', prevPos))
+            setOppositePos((prevPos) => moveInDirection('left', prevPos))
+            break
+          case 'right':
+            setHeroPos((prevPos) => moveInDirection('left', prevPos))
+            setOppositePos((prevPos) => moveInDirection('right', prevPos))
+            break
+          default:
+            break
+        }
+      }
+    }
+  }, [heroPos, oppositePos])
+
+  // check if character stands in same spot as its item
+  useEffect(() => {
+    const atZeroZero =
+      inSameSpace(heroPos, { x: 0, y: 0 }) &&
+      inSameSpace(heroItemPos, { x: 0, y: 0 })
+    if (!atZeroZero && inSameSpace(heroPos, heroItemPos)) {
+      setHeroHasItem(true)
+    }
+  }, [heroPos, heroItemPos])
+
+  useEffect(() => {
+    const atZeroZero =
+      inSameSpace(oppositePos, { x: 0, y: 0 }) &&
+      inSameSpace(oppositeItemPos, { x: 0, y: 0 })
+    if (!atZeroZero && inSameSpace(oppositePos, oppositeItemPos)) {
+      setOppositeHasItem(true)
+    }
+  }, [oppositePos, oppositeItemPos])
+
+  // check if character enters house
+  useEffect(() => {
+    const atZeroZero =
+      inSameSpace(heroPos, { x: 0, y: 0 }) &&
+      inSameSpace(heroItemPos, { x: 0, y: 0 })
+    if (!atZeroZero && inSameSpace(heroPos, heroGoalPos)) {
+      setHeroInHouse(true)
+    }
+  }, [heroPos])
+  useEffect(() => {
+    const atZeroZero =
+      inSameSpace(oppositePos, { x: 0, y: 0 }) &&
+      inSameSpace(oppositeItemPos, { x: 0, y: 0 })
+    if (!atZeroZero && inSameSpace(oppositePos, oppositeGoalPos)) {
+      setOppositeInHouse(true)
+    }
+  }, [oppositePos])
 }

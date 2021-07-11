@@ -8,6 +8,7 @@ import {
   sparkSideAtom,
   pieceEmojiAtom,
   wallHolePositionAtom,
+  pieceHasItemAtom,
 } from 'State'
 import './Pieces.scss'
 
@@ -84,16 +85,32 @@ export const HeroPiece = () => {
   const { x, y } = useRecoilValue(
     piecePositionAtom({ kind: 'character', side: 'hero' }),
   )
+  const hasItem = useRecoilValue(pieceHasItemAtom('hero'))
   const emoji = useRecoilValue(pieceEmojiAtom('hero'))
-  return <Piece left={x} top={y} className="Hero" emoji={emoji} />
+  return (
+    <Piece
+      left={x}
+      top={y}
+      className={`Hero ${hasItem ? 'Hero--has-item' : ''}`}
+      emoji={emoji}
+    />
+  )
 }
 
 export const OppositePiece = () => {
   const { x, y } = useRecoilValue(
     piecePositionAtom({ kind: 'character', side: 'opposite' }),
   )
+  const hasItem = useRecoilValue(pieceHasItemAtom('opposite'))
   const emoji = useRecoilValue(pieceEmojiAtom('opposite'))
-  return <Piece left={x} top={y} className="Opposite" emoji={emoji} />
+  return (
+    <Piece
+      left={x}
+      top={y}
+      className={`Opposite ${hasItem ? 'Opposite--has-item' : ''}`}
+      emoji={emoji}
+    />
+  )
 }
 
 export const HeroItem = () => {
