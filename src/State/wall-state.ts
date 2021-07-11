@@ -1,6 +1,7 @@
 import { randomOnGrid, wallCheck } from 'Helpers'
 import { atom, selector } from 'recoil'
 import { boundsSelector, gridSizeAtom } from './board-state'
+import { piecePositionAtom } from './pieces-state'
 
 export const wallHorizontalAtom = atom({
   key: 'wallOrientation',

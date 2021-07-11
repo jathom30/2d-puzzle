@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import {
   boundsSelector,
   gridSizeAtom,
@@ -25,21 +25,8 @@ import {
 } from 'Components'
 import './Board.scss'
 import { OppositePiece } from 'Components/Pieces'
-import { useMove } from 'Hooks'
-import { checkSpace } from 'Helpers/space-helpers'
+import { useMove, usePlacePiece } from 'Hooks'
 import { randomOnGrid } from 'Helpers'
-import { PositionType } from 'Types'
-
-const usePlacePiece = (
-  kind: string,
-  side: 'hero' | 'opposite',
-): [PositionType, () => void] => {
-  const voidPos = useRecoilValue(voidPositionsSelector)
-  const setPiece = useSetRecoilState(piecePositionAtom({ kind, side }))
-  const position = useRecoilValue(positionSelector(side))
-  const finalPos = checkSpace(voidPos, position)
-  return [finalPos, () => setPiece(finalPos)]
-}
 
 export const Board = () => {
   const bounds = useRecoilValue(boundsSelector)
@@ -71,17 +58,6 @@ export const Board = () => {
   useEffect(() => {
     setHeroPos()
     setOppositePos()
-
-    const posTest = (test: boolean) =>
-      test ? heroPos[axis] : oppositePos[axis]
-    const min = posTest(heroPos[axis] >= oppositePos[axis]) / gridSize
-    const max = posTest(heroPos[axis] <= oppositePos[axis]) / gridSize
-    const coord = randomOnGrid(gridSize, max, min)
-    const position = horizontalWall
-      ? { x: coord, y: wallPos.y }
-      : { x: wallPos.x, y: coord }
-    setWallHolePos(position)
-
     setHeroItemPos()
     setOppositeItemPos()
     setHeroGoalPos()
@@ -89,6 +65,17 @@ export const Board = () => {
     setHeroHazardPos()
     setOppositeHazardPos()
     setSparkPos()
+    setWallHolePos(() => {
+      const posTest = (test: boolean) =>
+        test ? heroPos[axis] : oppositePos[axis]
+      const min = posTest(heroPos[axis] >= oppositePos[axis]) / gridSize
+      const max = posTest(heroPos[axis] <= oppositePos[axis]) / gridSize
+      const coord = randomOnGrid(gridSize, max, min)
+      const position = horizontalWall
+        ? { x: coord, y: wallPos.y }
+        : { x: wallPos.x, y: coord }
+      return position
+    })
   }, [])
 
   useMove()
@@ -116,3 +103,9 @@ export const Board = () => {
     </div>
   )
 }
+
+// TODO: movement
+// TODO: collision detection
+// TODO: spark movement
+// TODO: Hazard tracking/movement?
+// TODO: second wall and hole?
