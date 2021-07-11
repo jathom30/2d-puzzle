@@ -1,6 +1,6 @@
 import { checkBounds, checkVoidPoints, get5050 } from 'Helpers'
 import { useEffect } from 'react'
-import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import {
   gridSizeAtom,
   nearestCharacterSelector,
@@ -10,10 +10,10 @@ import {
 
 export const useHazardMove = () => {
   const gridSize = useRecoilValue(gridSizeAtom)
-  const setHeroHazardPos = useSetRecoilState(
+  const [heroHazardPos, setHeroHazardPos] = useRecoilState(
     piecePositionAtom({ kind: 'hazard', side: 'hero' }),
   )
-  const setOppositeHazardPos = useSetRecoilState(
+  const [oppositeHazardPos, setOppositeHazardPos] = useRecoilState(
     piecePositionAtom({ kind: 'hazard', side: 'opposite' }),
   )
   const heroPos = useRecoilValue(
@@ -26,7 +26,14 @@ export const useHazardMove = () => {
   const oppositeHazardAggro = useRecoilValue(
     nearestCharacterSelector('opposite'),
   )
+  const heroGoalPos = useRecoilValue(
+    piecePositionAtom({ kind: 'goal', side: 'hero' }),
+  )
+  const oppositeGoalPos = useRecoilValue(
+    piecePositionAtom({ kind: 'goal', side: 'opposite' }),
+  )
   const wallSpaces = useRecoilValue(voidWallSpaceSelector)
+  const voidSpaces = [heroGoalPos, oppositeGoalPos, ...wallSpaces]
 
   const stepTowards = (delta: number, coord: number) => {
     if (delta < 0) {
@@ -48,13 +55,28 @@ export const useHazardMove = () => {
       const stepX = get5050()
       const xDirection = xDelta < 0 ? 'right' : 'left'
       const yDirection = yDelta < 0 ? 'down' : 'up'
-      if (stepX && checkVoidPoints(xDirection, prevPos, wallSpaces, gridSize)) {
+      if (
+        stepX &&
+        checkVoidPoints(
+          xDirection,
+          prevPos,
+          [...voidSpaces, oppositeHazardPos],
+          gridSize,
+        )
+      ) {
         return {
           x: stepTowards(xDelta, x),
           y,
         }
       }
-      if (checkVoidPoints(yDirection, prevPos, wallSpaces, gridSize)) {
+      if (
+        checkVoidPoints(
+          yDirection,
+          prevPos,
+          [...voidSpaces, heroHazardPos],
+          gridSize,
+        )
+      ) {
         return {
           x,
           y: stepTowards(yDelta, y),
