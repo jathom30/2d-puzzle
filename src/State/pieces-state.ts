@@ -1,5 +1,5 @@
 import { defaultPieces } from 'Config'
-import { generateSpace } from 'Helpers'
+import { generateSpace, get5050 } from 'Helpers'
 import { atom, atomFamily, selectorFamily } from 'recoil'
 import { PositionType, SideType } from 'Types'
 import { gridCountSelector, gridSizeAtom } from './board-state'
@@ -52,5 +52,5 @@ export const piecePositionAtom = atomFamily<
 
 export const sparkSideAtom = atom<'hero' | 'opposite'>({
   key: 'sparkPositionSelector',
-  default: (Math.floor(Math.random() * 2) + 1) % 2 === 0 ? 'hero' : 'opposite',
+  default: get5050() ? 'hero' : 'opposite',
 })

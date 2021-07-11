@@ -26,6 +26,7 @@ import './Board.scss'
 import { OppositePiece } from 'Components/Pieces'
 import { useMove, usePlacePiece } from 'Hooks'
 import { randomOnGrid } from 'Helpers'
+import { useHazardMove } from 'Hooks/useHazardMove'
 
 export const Board = () => {
   const bounds = useRecoilValue(boundsSelector)
@@ -83,6 +84,7 @@ export const Board = () => {
   }, [])
 
   useMove()
+  useHazardMove()
 
   return (
     <div

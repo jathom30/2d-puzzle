@@ -1,4 +1,4 @@
-import { inSameSpace } from 'Helpers'
+import { checkBounds, checkVoidPoints, inSameSpace } from 'Helpers'
 import { useEffect, useState } from 'react'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import {
@@ -9,14 +9,10 @@ import {
   pieceHasItemAtom,
   piecePositionAtom,
   voidPositionsSelector,
-} from 'State'
-import {
   loseConditionSelector,
   winConditionSelector,
-} from 'State/win-lose-state'
-import { PositionType, SideType } from 'Types'
-
-type DirectionType = 'up' | 'down' | 'left' | 'right'
+} from 'State'
+import { DirectionType, PositionType } from 'Types'
 
 export const useMove = () => {
   const [lastDirection, setLastDirection] = useState<DirectionType>()
@@ -49,44 +45,6 @@ export const useMove = () => {
   const loseCondition = useRecoilValue(loseConditionSelector)
   const gridSize = useRecoilValue(gridSizeAtom)
   const bounds = useRecoilValue(boundsSelector)
-
-  const checkBounds = (direction: DirectionType, prevPos: PositionType) => {
-    const { width, height } = bounds
-    const { x, y } = prevPos
-    switch (direction) {
-      case 'up':
-        return y !== 0
-      case 'down':
-        return y !== height - gridSize
-      case 'left':
-        return x !== 0
-      case 'right':
-        return x !== width - gridSize
-      default:
-        return true
-    }
-  }
-
-  const checkVoidPoints = (
-    direction: DirectionType,
-    prevPos: PositionType,
-    side: SideType,
-  ) => {
-    const { x, y } = prevPos
-    const voidPos = side === 'hero' ? voidHeroPos : voidOppositePos
-    switch (direction) {
-      case 'up':
-        return !voidPos.some((pos) => pos.y === y - gridSize && pos.x === x)
-      case 'down':
-        return !voidPos.some((pos) => pos.y === y + gridSize && pos.x === x)
-      case 'left':
-        return !voidPos.some((pos) => pos.y === y && pos.x === x - gridSize)
-      case 'right':
-        return !voidPos.some((pos) => pos.y === y && pos.x === x + gridSize)
-      default:
-        return true
-    }
-  }
 
   const moveInDirection = (direction: DirectionType, prevPos: PositionType) => {
     const axis = direction === 'up' || direction === 'down' ? 'y' : 'x'
@@ -126,8 +84,13 @@ export const useMove = () => {
         // check if they can move, then move
         // bounds, void spaces
         const direction = getDirection('hero')
-        const isWithinBounds = checkBounds(direction, prevPos)
-        const isNotVoid = checkVoidPoints(direction, prevPos, 'hero')
+        const isWithinBounds = checkBounds(direction, prevPos, bounds, gridSize)
+        const isNotVoid = checkVoidPoints(
+          direction,
+          prevPos,
+          voidHeroPos,
+          gridSize,
+        )
         if (isWithinBounds && isNotVoid) {
           return moveInDirection(direction, prevPos)
         }
@@ -135,8 +98,13 @@ export const useMove = () => {
       })
       setOppositePos((prevPos) => {
         const direction = getDirection('opposite')
-        const isWithinBounds = checkBounds(direction, prevPos)
-        const isNotVoid = checkVoidPoints(direction, prevPos, 'opposite')
+        const isWithinBounds = checkBounds(direction, prevPos, bounds, gridSize)
+        const isNotVoid = checkVoidPoints(
+          direction,
+          prevPos,
+          voidOppositePos,
+          gridSize,
+        )
         if (isWithinBounds && isNotVoid) {
           return moveInDirection(direction, prevPos)
         }

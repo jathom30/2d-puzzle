@@ -1,4 +1,4 @@
-import { atom, selectorFamily } from 'recoil'
+import { atom, selector, selectorFamily } from 'recoil'
 import { PositionType, SideType } from 'Types'
 import { gridSizeAtom } from './board-state'
 import { pieceHasItemAtom, piecePositionAtom } from './pieces-state'
@@ -13,39 +13,47 @@ export const moveCountAtom = atom({
   default: 0,
 })
 
+export const voidWallSpaceSelector = selector({
+  key: 'voidWallSpaceSelector',
+  get: ({ get }) => {
+    const wallPos = get(wallPositionSelector)
+    const wallDims = get(wallDimensionsSelector)
+    const gridSize = get(gridSizeAtom)
+    const getWallCoords = () => {
+      const yUnits = wallDims.height / gridSize
+      const xUnits = wallDims.width / gridSize
+      const yVoids = Array.from({ length: yUnits }, (v, i) => i).map(
+        (u) => u * gridSize + wallPos.y,
+      )
+      const xVoids = Array.from({ length: xUnits }, (v, i) => i).map(
+        (u) => u * gridSize + wallPos.x,
+      )
+      const voidCoords = yVoids
+        .map((y) => {
+          return xVoids.map((x) => {
+            return { x, y }
+          })
+        })
+        .flat()
+      return voidCoords
+    }
+    const wallHolePos = get(wallHolePositionAtom)
+    // filter wall hole pos from wall coords so char does not clip
+    const wallPosFiltered = getWallCoords().filter((pos) => {
+      const xMatch = pos.x === wallHolePos.x
+      const yMatch = pos.y === wallHolePos.y
+      return !(xMatch && yMatch)
+    })
+    return wallPosFiltered
+  },
+})
+
 export const voidPositionsSelector = selectorFamily<PositionType[], SideType>({
   key: 'voidPositionsSelector',
   get:
     (side) =>
     ({ get }) => {
-      const wallPos = get(wallPositionSelector)
-      const wallDims = get(wallDimensionsSelector)
-      const gridSize = get(gridSizeAtom)
-      const getWallCoords = () => {
-        const yUnits = wallDims.height / gridSize
-        const xUnits = wallDims.width / gridSize
-        const yVoids = Array.from({ length: yUnits }, (v, i) => i).map(
-          (u) => u * gridSize + wallPos.y,
-        )
-        const xVoids = Array.from({ length: xUnits }, (v, i) => i).map(
-          (u) => u * gridSize + wallPos.x,
-        )
-        const voidCoords = yVoids
-          .map((y) => {
-            return xVoids.map((x) => {
-              return { x, y }
-            })
-          })
-          .flat()
-        return voidCoords
-      }
-      const wallHolePos = get(wallHolePositionAtom)
-      // filter wall hole pos from wall coords so char does not clip
-      const wallPosFiltered = getWallCoords().filter((pos) => {
-        const xMatch = pos.x === wallHolePos.x
-        const yMatch = pos.y === wallHolePos.y
-        return !(xMatch && yMatch)
-      })
+      const wallSpaces = get(voidWallSpaceSelector)
       const heroPos = get(
         piecePositionAtom({ kind: 'character', side: 'hero' }),
       )
@@ -60,11 +68,39 @@ export const voidPositionsSelector = selectorFamily<PositionType[], SideType>({
         piecePositionAtom({ kind: 'goal', side: otherSide }),
       )
       return [
-        ...wallPosFiltered,
+        ...wallSpaces,
         heroPos,
         oppositePos,
         otherGoalPos,
         ...(hasItem ? [] : [goalPos]),
       ]
+    },
+})
+
+const getDistanceBetween = (pos1: PositionType, pos2: PositionType) => {
+  const xDelta = (pos1.x - pos2.x) ** 2
+  const yDelta = (pos1.y - pos2.y) ** 2
+  const sqrt = Math.sqrt(xDelta + yDelta)
+  return sqrt
+}
+
+export const nearestCharacterSelector = selectorFamily<SideType, SideType>({
+  key: 'nearestCharacterSelector',
+  get:
+    (side) =>
+    ({ get }) => {
+      const hazardPos = get(piecePositionAtom({ kind: 'hazard', side }))
+      const heroPos = get(
+        piecePositionAtom({ kind: 'character', side: 'hero' }),
+      )
+      const oppositePos = get(
+        piecePositionAtom({ kind: 'character', side: 'opposite' }),
+      )
+      const heroDistance = getDistanceBetween(heroPos, hazardPos)
+      const oppositeDistance = getDistanceBetween(oppositePos, hazardPos)
+      if (heroDistance <= oppositeDistance) {
+        return 'hero'
+      }
+      return 'opposite'
     },
 })
