@@ -33,3 +33,14 @@ export const loseConditionSelector = selector({
     return heroTouchedHazard || oppositeTouchedHazard
   },
 })
+
+export const readyGameSelector = selector({
+  key: 'readyGameSelector',
+  get: ({ get }) => {
+    const heroPos = get(piecePositionAtom({ kind: 'character', side: 'hero' }))
+    const oppositePos = get(
+      piecePositionAtom({ kind: 'character', side: 'opposite' }),
+    )
+    return !(heroPos.x === oppositePos.x && heroPos.y === oppositePos.y)
+  },
+})

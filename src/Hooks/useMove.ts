@@ -11,10 +11,12 @@ import {
   voidPositionsSelector,
   loseConditionSelector,
   winConditionSelector,
+  readyGameSelector,
 } from 'State'
 import { DirectionType, PositionType } from 'Types'
 
 export const useMove = () => {
+  const gameIsReady = useRecoilValue(readyGameSelector)
   const [lastDirection, setLastDirection] = useState<DirectionType>()
   const voidHeroPos = useRecoilValue(voidPositionsSelector('hero'))
   const voidOppositePos = useRecoilValue(voidPositionsSelector('opposite'))
@@ -165,18 +167,12 @@ export const useMove = () => {
 
   // check if character enters house
   useEffect(() => {
-    const atZeroZero =
-      inSameSpace(heroPos, { x: 0, y: 0 }) &&
-      inSameSpace(heroItemPos, { x: 0, y: 0 })
-    if (!atZeroZero && inSameSpace(heroPos, heroGoalPos)) {
+    if (gameIsReady && inSameSpace(heroPos, heroGoalPos)) {
       setHeroInHouse(true)
     }
   }, [heroPos])
   useEffect(() => {
-    const atZeroZero =
-      inSameSpace(oppositePos, { x: 0, y: 0 }) &&
-      inSameSpace(oppositeItemPos, { x: 0, y: 0 })
-    if (!atZeroZero && inSameSpace(oppositePos, oppositeGoalPos)) {
+    if (gameIsReady && inSameSpace(oppositePos, oppositeGoalPos)) {
       setOppositeInHouse(true)
     }
   }, [oppositePos])

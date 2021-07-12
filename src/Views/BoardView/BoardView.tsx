@@ -5,10 +5,12 @@ import { useRecoilValue } from 'recoil'
 import { moveCountAtom } from 'State'
 import {
   loseConditionSelector,
+  readyGameSelector,
   winConditionSelector,
 } from 'State/win-lose-state'
 
 export const BoardView = () => {
+  const gameIsReady = useRecoilValue(readyGameSelector)
   const moveCount = useRecoilValue(moveCountAtom)
   const winCondition = useRecoilValue(winConditionSelector)
   const loseCondition = useRecoilValue(loseConditionSelector)
@@ -17,8 +19,12 @@ export const BoardView = () => {
     <div className="BoardView">
       <div className="BoardView__header">
         <BackButton />
-        {winCondition && <span className="BoardView__count">You Win</span>}
-        {loseCondition && <span className="BoardView__count">You Lose</span>}
+        {gameIsReady && winCondition && (
+          <span className="BoardView__count">You Win</span>
+        )}
+        {gameIsReady && loseCondition && (
+          <span className="BoardView__count">You Lose</span>
+        )}
         <span className="BoardView__count">
           Move Count: <strong>{moveCount}</strong>
         </span>

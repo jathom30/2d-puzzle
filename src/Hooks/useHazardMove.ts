@@ -1,12 +1,14 @@
-import { checkBounds, checkVoidPoints, get5050 } from 'Helpers'
+import { checkVoidPoints, get5050 } from 'Helpers'
 import { useEffect } from 'react'
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import {
   gridSizeAtom,
   nearestCharacterSelector,
+  pieceEntersHouseAtom,
   piecePositionAtom,
   voidWallSpaceSelector,
 } from 'State'
+import { PositionType, SideType } from 'Types'
 
 export const useHazardMove = () => {
   const gridSize = useRecoilValue(gridSizeAtom)
@@ -19,9 +21,11 @@ export const useHazardMove = () => {
   const heroPos = useRecoilValue(
     piecePositionAtom({ kind: 'character', side: 'hero' }),
   )
+  const heroInHouse = useRecoilValue(pieceEntersHouseAtom('hero'))
   const oppositePos = useRecoilValue(
     piecePositionAtom({ kind: 'character', side: 'opposite' }),
   )
+  const oppositeInHouse = useRecoilValue(pieceEntersHouseAtom('opposite'))
   const heroHazardAggro = useRecoilValue(nearestCharacterSelector('hero'))
   const oppositeHazardAggro = useRecoilValue(
     nearestCharacterSelector('opposite'),
@@ -45,70 +49,54 @@ export const useHazardMove = () => {
     return coord
   }
 
+  // find which char is closer to hazard that is not in a house
+  const targetPos = (aggro: SideType) => {
+    if (aggro === 'hero') {
+      return heroInHouse ? oppositePos : heroPos
+    }
+    return oppositeInHouse ? heroPos : oppositePos
+  }
+
+  const moveHazard = (
+    prevPos: PositionType,
+    otherPos: PositionType,
+    aggro: SideType,
+  ) => {
+    const { x, y } = prevPos
+    const xDelta = x - targetPos(aggro).x
+    const yDelta = y - targetPos(aggro).y
+    const stepX = get5050()
+    const xDirection = xDelta < 0 ? 'right' : 'left'
+    const yDirection = yDelta < 0 ? 'down' : 'up'
+    if (
+      stepX &&
+      checkVoidPoints(xDirection, prevPos, [...voidSpaces, otherPos], gridSize)
+    ) {
+      return {
+        x: stepTowards(xDelta, x),
+        y,
+      }
+    }
+    if (
+      checkVoidPoints(yDirection, prevPos, [...voidSpaces, otherPos], gridSize)
+    ) {
+      return {
+        x,
+        y: stepTowards(yDelta, y),
+      }
+    }
+    return prevPos
+  }
+
   useEffect(() => {
-    // find which char is closer to which hazard
-    const targetPos = heroHazardAggro === 'hero' ? heroPos : oppositePos
-    setHeroHazardPos((prevPos) => {
-      const { x, y } = prevPos
-      const xDelta = x - targetPos.x
-      const yDelta = y - targetPos.y
-      const stepX = get5050()
-      const xDirection = xDelta < 0 ? 'right' : 'left'
-      const yDirection = yDelta < 0 ? 'down' : 'up'
-      if (
-        stepX &&
-        checkVoidPoints(
-          xDirection,
-          prevPos,
-          [...voidSpaces, oppositeHazardPos],
-          gridSize,
-        )
-      ) {
-        return {
-          x: stepTowards(xDelta, x),
-          y,
-        }
-      }
-      if (
-        checkVoidPoints(
-          yDirection,
-          prevPos,
-          [...voidSpaces, heroHazardPos],
-          gridSize,
-        )
-      ) {
-        return {
-          x,
-          y: stepTowards(yDelta, y),
-        }
-      }
-      return prevPos
-    })
+    setHeroHazardPos((prevPos) =>
+      moveHazard(prevPos, oppositeHazardPos, heroHazardAggro),
+    )
   }, [heroPos, oppositePos])
 
   useEffect(() => {
-    // find which char is closer to which hazard
-    const targetPos = oppositeHazardAggro === 'hero' ? heroPos : oppositePos
-    setOppositeHazardPos((prevPos) => {
-      const { x, y } = prevPos
-      const xDelta = x - targetPos.x
-      const yDelta = y - targetPos.y
-      const stepX = get5050()
-      const xDirection = xDelta < 0 ? 'right' : 'left'
-      const yDirection = yDelta < 0 ? 'down' : 'up'
-      if (stepX && checkVoidPoints(xDirection, prevPos, wallSpaces, gridSize)) {
-        return {
-          x: stepTowards(xDelta, x),
-          y,
-        }
-      }
-      if (checkVoidPoints(yDirection, prevPos, wallSpaces, gridSize)) {
-        return {
-          x,
-          y: stepTowards(yDelta, y),
-        }
-      }
-      return prevPos
-    })
+    setOppositeHazardPos((prevPos) =>
+      moveHazard(prevPos, heroHazardPos, oppositeHazardAggro),
+    )
   }, [heroPos, oppositePos])
 }

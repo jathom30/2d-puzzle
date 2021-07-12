@@ -20,11 +20,11 @@
   align-items: center;
   justify-content: center;
   background: white;
+  transition: all .2s ease;
 }
 
 .Hero, .Opposite {
   background: var(--hero);
-  transition: all .2s ease;
   z-index: 1;
   &--has-item:after {
     content: '🔑';
