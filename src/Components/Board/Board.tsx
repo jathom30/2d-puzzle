@@ -110,5 +110,5 @@ export const Board = () => {
   )
 }
 
-// TODO: Hazard tracking/movement?
 // TODO: second wall and hole?
+// TODO: health counters for hero and opposite? 2hp? 2 hits before death and game over

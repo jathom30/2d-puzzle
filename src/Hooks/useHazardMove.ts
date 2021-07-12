@@ -21,6 +21,12 @@ export const useHazardMove = () => {
   const heroPos = useRecoilValue(
     piecePositionAtom({ kind: 'character', side: 'hero' }),
   )
+  const heroItemPos = useRecoilValue(
+    piecePositionAtom({ kind: 'item', side: 'hero' }),
+  )
+  const oppositeItemPos = useRecoilValue(
+    piecePositionAtom({ kind: 'item', side: 'opposite' }),
+  )
   const heroInHouse = useRecoilValue(pieceEntersHouseAtom('hero'))
   const oppositePos = useRecoilValue(
     piecePositionAtom({ kind: 'character', side: 'opposite' }),
@@ -37,7 +43,13 @@ export const useHazardMove = () => {
     piecePositionAtom({ kind: 'goal', side: 'opposite' }),
   )
   const wallSpaces = useRecoilValue(voidWallSpaceSelector)
-  const voidSpaces = [heroGoalPos, oppositeGoalPos, ...wallSpaces]
+  const voidSpaces = [
+    heroGoalPos,
+    oppositeGoalPos,
+    ...wallSpaces,
+    heroItemPos,
+    oppositeItemPos,
+  ]
 
   const stepTowards = (delta: number, coord: number) => {
     if (delta < 0) {
@@ -59,7 +71,7 @@ export const useHazardMove = () => {
 
   const moveHazard = (
     prevPos: PositionType,
-    otherPos: PositionType,
+    otherVoided: PositionType[],
     aggro: SideType,
   ) => {
     const { x, y } = prevPos
@@ -70,7 +82,12 @@ export const useHazardMove = () => {
     const yDirection = yDelta < 0 ? 'down' : 'up'
     if (
       stepX &&
-      checkVoidPoints(xDirection, prevPos, [...voidSpaces, otherPos], gridSize)
+      checkVoidPoints(
+        xDirection,
+        prevPos,
+        [...voidSpaces, ...otherVoided],
+        gridSize,
+      )
     ) {
       return {
         x: stepTowards(xDelta, x),
@@ -78,7 +95,12 @@ export const useHazardMove = () => {
       }
     }
     if (
-      checkVoidPoints(yDirection, prevPos, [...voidSpaces, otherPos], gridSize)
+      checkVoidPoints(
+        yDirection,
+        prevPos,
+        [...voidSpaces, ...otherVoided],
+        gridSize,
+      )
     ) {
       return {
         x,
@@ -90,13 +112,13 @@ export const useHazardMove = () => {
 
   useEffect(() => {
     setHeroHazardPos((prevPos) =>
-      moveHazard(prevPos, oppositeHazardPos, heroHazardAggro),
+      moveHazard(prevPos, [oppositeHazardPos], heroHazardAggro),
     )
   }, [heroPos, oppositePos])
 
   useEffect(() => {
     setOppositeHazardPos((prevPos) =>
-      moveHazard(prevPos, heroHazardPos, oppositeHazardAggro),
+      moveHazard(prevPos, [heroHazardPos], oppositeHazardAggro),
     )
   }, [heroPos, oppositePos])
 }
