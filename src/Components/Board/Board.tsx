@@ -3,14 +3,12 @@ import { useRecoilValue, useSetRecoilState } from 'recoil'
 import {
   boundsSelector,
   gridSizeAtom,
-  loseConditionSelector,
   pieceEntersHouseAtom,
   pieceHasItemAtom,
   resetGameAtom,
   wallHolePositionAtom,
   wallHorizontalAtom,
   wallPositionSelector,
-  winConditionSelector,
 } from 'State'
 import {
   WallPiece,
