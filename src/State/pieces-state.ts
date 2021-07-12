@@ -1,6 +1,6 @@
 import { defaultPieces } from 'Config'
-import { generateSpace, get5050 } from 'Helpers'
-import { atom, atomFamily, selectorFamily } from 'recoil'
+import { generateSpace } from 'Helpers'
+import { atomFamily, selector, selectorFamily } from 'recoil'
 import { PositionType, SideType } from 'Types'
 import { gridCountSelector, gridSizeAtom } from './board-state'
 import { wallHorizontalAtom, wallPositionSelector } from './wall-state'
@@ -50,7 +50,10 @@ export const piecePositionAtom = atomFamily<
   default: { x: 0, y: 0 },
 })
 
-export const sparkSideAtom = atom<'hero' | 'opposite'>({
-  key: 'sparkPositionSelector',
-  default: get5050() ? 'hero' : 'opposite',
+export const hazardRadiusSelector = selector({
+  key: 'hazardRadius',
+  get: ({ get }) => {
+    const gridSize = get(gridSizeAtom)
+    return gridSize * 5
+  },
 })

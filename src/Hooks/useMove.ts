@@ -114,6 +114,9 @@ export const useMove = () => {
       })
     }
     document.addEventListener('keypress', handleMove)
+    if (winCondition || loseCondition) {
+      document.removeEventListener('keypress', handleMove)
+    }
     return () => document.removeEventListener('keypress', handleMove)
   }, [voidHeroPos, voidOppositePos])
 
@@ -148,19 +151,13 @@ export const useMove = () => {
 
   // check if character stands in same spot as its item
   useEffect(() => {
-    const atZeroZero =
-      inSameSpace(heroPos, { x: 0, y: 0 }) &&
-      inSameSpace(heroItemPos, { x: 0, y: 0 })
-    if (!atZeroZero && inSameSpace(heroPos, heroItemPos)) {
+    if (gameIsReady && inSameSpace(heroPos, heroItemPos)) {
       setHeroHasItem(true)
     }
   }, [heroPos, heroItemPos])
 
   useEffect(() => {
-    const atZeroZero =
-      inSameSpace(oppositePos, { x: 0, y: 0 }) &&
-      inSameSpace(oppositeItemPos, { x: 0, y: 0 })
-    if (!atZeroZero && inSameSpace(oppositePos, oppositeItemPos)) {
+    if (gameIsReady && inSameSpace(oppositePos, oppositeItemPos)) {
       setOppositeHasItem(true)
     }
   }, [oppositePos, oppositeItemPos])

@@ -45,3 +45,10 @@ export const checkSpace = (
 
 export const inSameSpace = (pos1: PositionType, pos2: PositionType) =>
   pos1.x === pos2.x && pos1.y === pos2.y
+
+export const withinRadius = (radius: number, distance: number) => {
+  return distance < radius
+}
+
+export const getDistanceBetween = (pos1: PositionType, pos2: PositionType) =>
+  Math.sqrt((pos1.x - pos2.x) ** 2 + (pos1.y - pos2.y) ** 2)

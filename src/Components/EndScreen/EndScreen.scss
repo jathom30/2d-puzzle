@@ -1,0 +1,21 @@
+.EndScreen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  position: fixed;
+  top: 0;bottom: 0;left: 0;right: 0;
+  background: rgba(black,.75);
+  h1 {
+    font-size: 5rem;
+    color: white;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  &__buttons {
+    display: grid;
+    align-items: center;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem
+  }
+}

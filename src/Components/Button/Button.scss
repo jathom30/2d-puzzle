@@ -1,12 +1,12 @@
-.BackButton {
-  display: inline-block;
-  color: white;
+.Button {
+  color: black;
   text-decoration: none;
   padding: .5rem 1rem;
   border: 1px solid white;
   font-weight: bold;
   cursor: pointer;
   border-radius: .25rem;
+  background: white;
   height: 2.5rem;
   font-size: 1rem;
   &:hover {

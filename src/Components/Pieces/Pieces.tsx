@@ -1,15 +1,16 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import { useRecoilValue } from 'recoil'
 import {
   gridSizeAtom,
   wallDimensionsSelector,
   wallPositionSelector,
   piecePositionAtom,
-  sparkSideAtom,
   pieceEmojiAtom,
   wallHolePositionAtom,
   pieceHasItemAtom,
+  hazardRadiusSelector,
 } from 'State'
+import { SideType } from 'Types'
 import './Pieces.scss'
 
 export const Piece: React.FC<{
@@ -20,6 +21,8 @@ export const Piece: React.FC<{
   height?: number
   width?: number
   emoji?: string
+  item?: string
+  before?: ReactNode
 }> = ({
   className,
   top,
@@ -28,6 +31,8 @@ export const Piece: React.FC<{
   height,
   width,
   emoji,
+  item,
+  before,
 }) => {
   const gridSize = useRecoilValue(gridSizeAtom)
   const defaultStyles = {
@@ -35,6 +40,12 @@ export const Piece: React.FC<{
     width: gridSize,
     fontSize: gridSize,
     lineHeight: gridSize,
+  }
+  const itemStyles = {
+    width: gridSize / 2,
+    height: gridSize / 2,
+    fontSize: gridSize,
+    lineHeight: `${gridSize}px`,
   }
   return (
     <div
@@ -47,7 +58,11 @@ export const Piece: React.FC<{
         ...(height && { height }),
       }}
     >
-      {emoji}
+      {before}
+      <span>{emoji}</span>
+      <span className="Piece__item" style={itemStyles}>
+        {item}
+      </span>
     </div>
   )
 }
@@ -81,86 +96,60 @@ export const WallHolePiece = () => {
   )
 }
 
-export const HeroPiece = () => {
+export const CharacterPiece: React.FC<{ side: SideType }> = ({ side }) => {
   const { x, y } = useRecoilValue(
-    piecePositionAtom({ kind: 'character', side: 'hero' }),
+    piecePositionAtom({ kind: 'character', side }),
   )
-  const hasItem = useRecoilValue(pieceHasItemAtom('hero'))
-  const emoji = useRecoilValue(pieceEmojiAtom('hero'))
+  const hasItem = useRecoilValue(pieceHasItemAtom(side))
+  const emoji = useRecoilValue(pieceEmojiAtom(side))
   return (
     <Piece
       left={x}
       top={y}
-      className={`Hero ${hasItem ? 'Hero--has-item' : ''}`}
+      className={`Character ${side
+        .substring(0, 1)
+        .toUpperCase()}${side.substring(1)}`}
       emoji={emoji}
+      item={hasItem ? '🔑' : ''}
     />
   )
 }
 
-export const OppositePiece = () => {
-  const { x, y } = useRecoilValue(
-    piecePositionAtom({ kind: 'character', side: 'opposite' }),
-  )
-  const hasItem = useRecoilValue(pieceHasItemAtom('opposite'))
-  const emoji = useRecoilValue(pieceEmojiAtom('opposite'))
+export const ItemPiece: React.FC<{ side: SideType }> = ({ side }) => {
+  const { x, y } = useRecoilValue(piecePositionAtom({ kind: 'item', side }))
+  const otherSide = side === 'hero' ? 'Opposite' : 'Hero'
+  return <Piece left={x} top={y} className={`Item ${otherSide}`} emoji="🔑" />
+}
+
+export const GoalPiece: React.FC<{ side: SideType }> = ({ side }) => {
+  const { x, y } = useRecoilValue(piecePositionAtom({ kind: 'goal', side }))
   return (
     <Piece
       left={x}
       top={y}
-      className={`Opposite ${hasItem ? 'Opposite--has-item' : ''}`}
-      emoji={emoji}
+      className={`Goal ${side.substring(0, 1).toUpperCase()}${side.substring(
+        1,
+      )}`}
+      emoji="🏠"
     />
   )
 }
 
-export const HeroItem = () => {
-  const { x, y } = useRecoilValue(
-    piecePositionAtom({ kind: 'item', side: 'opposite' }),
-  )
-  return <Piece left={x} top={y} className="Hero" emoji="🔑" />
-}
-
-export const OppositeItem = () => {
-  const { x, y } = useRecoilValue(
-    piecePositionAtom({ kind: 'item', side: 'hero' }),
-  )
-  return <Piece left={x} top={y} className="Opposite" emoji="🔑" />
-}
-
-export const HeroGoalPiece = () => {
-  const { x, y } = useRecoilValue(
-    piecePositionAtom({ kind: 'goal', side: 'hero' }),
-  )
-  return <Piece left={x} top={y} className="Hero" emoji="🏠" />
-}
-
-export const OppositeGoalPiece = () => {
-  const { x, y } = useRecoilValue(
-    piecePositionAtom({ kind: 'goal', side: 'opposite' }),
-  )
-  return <Piece left={x} top={y} className="Opposite" emoji="🏠" />
-}
-
-export const HeroHazardPiece = () => {
-  const { x, y } = useRecoilValue(
-    piecePositionAtom({ kind: 'hazard', side: 'hero' }),
-  )
+export const HazardPiece: React.FC<{ side: SideType }> = ({ side }) => {
+  const { x, y } = useRecoilValue(piecePositionAtom({ kind: 'hazard', side }))
+  const radius = useRecoilValue(hazardRadiusSelector)
   const emoji = useRecoilValue(pieceEmojiAtom('hazard'))
-  return <Piece left={x} top={y} className="Hazard" emoji={emoji} />
-}
-
-export const OppositeHazardPiece = () => {
-  const { x, y } = useRecoilValue(
-    piecePositionAtom({ kind: 'hazard', side: 'opposite' }),
+  const boundaryStyles = {
+    width: radius * 2,
+    height: radius * 2,
+  }
+  return (
+    <Piece
+      left={x}
+      top={y}
+      className="Hazard"
+      emoji={emoji}
+      before={<div className="Hazard__boundary" style={boundaryStyles} />}
+    />
   )
-  const emoji = useRecoilValue(pieceEmojiAtom('hazard'))
-  return <Piece left={x} top={y} className="Hazard" emoji={emoji} />
-}
-
-export const SparkPiece = () => {
-  const sparkSide = useRecoilValue(sparkSideAtom)
-  const { x, y } = useRecoilValue(
-    piecePositionAtom({ kind: 'spark', side: sparkSide }),
-  )
-  return <Piece left={x} top={y} className="Spark" emoji="⚡️" />
 }

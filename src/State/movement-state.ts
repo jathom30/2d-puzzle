@@ -1,3 +1,4 @@
+import { getDistanceBetween } from 'Helpers'
 import { atom, selector, selectorFamily } from 'recoil'
 import { PositionType, SideType } from 'Types'
 import { gridSizeAtom } from './board-state'
@@ -76,13 +77,6 @@ export const voidPositionsSelector = selectorFamily<PositionType[], SideType>({
       ]
     },
 })
-
-const getDistanceBetween = (pos1: PositionType, pos2: PositionType) => {
-  const xDelta = (pos1.x - pos2.x) ** 2
-  const yDelta = (pos1.y - pos2.y) ** 2
-  const sqrt = Math.sqrt(xDelta + yDelta)
-  return sqrt
-}
 
 export const nearestCharacterSelector = selectorFamily<SideType, SideType>({
   key: 'nearestCharacterSelector',

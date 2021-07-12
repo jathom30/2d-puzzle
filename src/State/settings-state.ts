@@ -5,14 +5,9 @@ export const itemAtom = atom({
   default: true,
 })
 
-export const hazardAtom = atom({
-  key: 'hazard',
-  default: true,
-})
-
-export const sparkAtom = atom({
-  key: 'spark',
-  default: true,
+export const hazardCountAtom = atom({
+  key: 'hazardCount',
+  default: 2,
 })
 
 export const readyAtom = atom({

@@ -2,7 +2,7 @@ import React from 'react'
 import { BackButton } from 'Components'
 import './SettingsView.scss'
 import { useRecoilState } from 'recoil'
-import { hazardAtom, itemAtom, pieceEmojiAtom, sparkAtom } from 'State'
+import { hazardCountAtom, itemAtom, pieceEmojiAtom } from 'State'
 
 const emojiChoices = [
   '👨‍⚕️',
@@ -92,8 +92,7 @@ export const SettingsView = () => {
   const [hazard, setHazard] = useRecoilState(pieceEmojiAtom('hazard'))
 
   const [hasItem, setHasItem] = useRecoilState(itemAtom)
-  const [hasHazard, setHasHazard] = useRecoilState(hazardAtom)
-  const [hasSpark, setHasSpark] = useRecoilState(sparkAtom)
+  const [hazardCount, setHazardCount] = useRecoilState(hazardCountAtom)
 
   return (
     <div className="SettingsView">
@@ -107,16 +106,15 @@ export const SettingsView = () => {
             <p>Items on board</p>
             <div className="rules-rule">
               <ItemCheckbox label="Item" item={hasItem} onChange={setHasItem} />
-              <ItemCheckbox
-                label="Hazard"
-                item={hasHazard}
-                onChange={setHasHazard}
-              />
-              <ItemCheckbox
-                label="Spark"
-                item={hasSpark}
-                onChange={setHasSpark}
-              />
+              <label htmlFor="hazardCount">
+                <span>Hazard Count</span>
+                <input
+                  id="hazardCount"
+                  type="number"
+                  value={hazardCount}
+                  onChange={(e) => setHazardCount(parseInt(e.target.value, 10))}
+                />
+              </label>
             </div>
           </div>
           <div className="rule-wrapper">

@@ -1,8 +1,15 @@
-import { checkVoidPoints, get5050 } from 'Helpers'
+import {
+  checkVoidPoints,
+  get5050,
+  getDistanceBetween,
+  inSameSpace,
+  withinRadius,
+} from 'Helpers'
 import { useEffect } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import {
   gridSizeAtom,
+  hazardRadiusSelector,
   nearestCharacterSelector,
   pieceEntersHouseAtom,
   piecePositionAtom,
@@ -12,6 +19,7 @@ import { PositionType, SideType } from 'Types'
 
 export const useHazardMove = () => {
   const gridSize = useRecoilValue(gridSizeAtom)
+  const hazardRadius = useRecoilValue(hazardRadiusSelector)
   const [heroHazardPos, setHeroHazardPos] = useRecoilState(
     piecePositionAtom({ kind: 'hazard', side: 'hero' }),
   )
@@ -77,48 +85,66 @@ export const useHazardMove = () => {
     const { x, y } = prevPos
     const xDelta = x - targetPos(aggro).x
     const yDelta = y - targetPos(aggro).y
-    const stepX = get5050()
     const xDirection = xDelta < 0 ? 'right' : 'left'
     const yDirection = yDelta < 0 ? 'down' : 'up'
-    if (
-      stepX &&
-      checkVoidPoints(
-        xDirection,
-        prevPos,
-        [...voidSpaces, ...otherVoided],
-        gridSize,
-      )
-    ) {
+    const canStepX = checkVoidPoints(
+      xDirection,
+      prevPos,
+      [...voidSpaces, ...otherVoided],
+      gridSize,
+    )
+    const canStepY = checkVoidPoints(
+      yDirection,
+      prevPos,
+      [...voidSpaces, ...otherVoided],
+      gridSize,
+    )
+    const nextStep = {
+      x: canStepX ? stepTowards(xDelta, x) : prevPos.x,
+      y: canStepY ? stepTowards(yDelta, y) : prevPos.y,
+    }
+    // if nextStep will be a voided space...
+    // ...only move along one axis or the other so step stays valid
+    const inVoidSpace = voidSpaces.some((space) => inSameSpace(space, nextStep))
+    if (inVoidSpace) {
+      if (get5050()) {
+        return {
+          x: prevPos.x,
+          y: nextStep.y,
+        }
+      }
       return {
-        x: stepTowards(xDelta, x),
-        y,
+        x: nextStep.x,
+        y: prevPos.y,
       }
     }
-    if (
-      checkVoidPoints(
-        yDirection,
-        prevPos,
-        [...voidSpaces, ...otherVoided],
-        gridSize,
-      )
-    ) {
-      return {
-        x,
-        y: stepTowards(yDelta, y),
-      }
+    // if nextStep is not to a void space, 50/50 chance of successful step
+    // ! remove or greaten chance to make harder
+    return get5050() ? nextStep : prevPos
+  }
+
+  const handleMove = (
+    prevPos: PositionType,
+    aggro: SideType,
+    voidCoords: PositionType[],
+  ) => {
+    const delta = getDistanceBetween(targetPos(aggro), prevPos)
+    const isClose = withinRadius(hazardRadius, delta)
+    if (isClose) {
+      return moveHazard(prevPos, voidCoords, aggro)
     }
     return prevPos
   }
 
   useEffect(() => {
     setHeroHazardPos((prevPos) =>
-      moveHazard(prevPos, [oppositeHazardPos], heroHazardAggro),
+      handleMove(prevPos, heroHazardAggro, [oppositeHazardPos]),
     )
   }, [heroPos, oppositePos])
 
   useEffect(() => {
     setOppositeHazardPos((prevPos) =>
-      moveHazard(prevPos, [heroHazardPos], oppositeHazardAggro),
+      handleMove(prevPos, oppositeHazardAggro, [heroHazardPos]),
     )
   }, [heroPos, oppositePos])
 }

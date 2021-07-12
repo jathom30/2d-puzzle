@@ -21,21 +21,15 @@
   justify-content: center;
   background: white;
   transition: all .2s ease;
-}
-
-.Hero, .Opposite {
-  background: var(--hero);
-  z-index: 1;
-  &--has-item:after {
-    content: '🔑';
+  &__item {
     position: absolute;
     bottom: 0;
     right: 0;
-    width: calc(var(--height)/2);
-    height: calc(var(--height)/2);
-    font-size: var(--height);
-    line-height: var(--height);
   }
+}
+
+.Hero {
+  background: var(--hero);
 }
 
 .Opposite {
@@ -49,6 +43,15 @@
 
 .Hazard {
   background: rgb(179, 5, 5);
+  &__boundary {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    border-radius: 50%;
+    background-color: rgba(179, 5, 5, .075);
+  }
 }
 
 .Spark {

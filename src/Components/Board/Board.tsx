@@ -3,32 +3,30 @@ import { useRecoilValue, useSetRecoilState } from 'recoil'
 import {
   boundsSelector,
   gridSizeAtom,
+  loseConditionSelector,
   pieceEntersHouseAtom,
   pieceHasItemAtom,
-  sparkSideAtom,
+  resetGameAtom,
   wallHolePositionAtom,
   wallHorizontalAtom,
   wallPositionSelector,
+  winConditionSelector,
 } from 'State'
 import {
   WallPiece,
-  HeroPiece,
+  CharacterPiece,
   WallHolePiece,
-  HeroItem,
-  OppositeItem,
-  HeroGoalPiece,
-  OppositeGoalPiece,
-  HeroHazardPiece,
-  OppositeHazardPiece,
-  // SparkPiece,
+  ItemPiece,
+  GoalPiece,
+  HazardPiece,
 } from 'Components'
 import './Board.scss'
-import { OppositePiece } from 'Components/Pieces'
 import { useMove, usePlacePiece } from 'Hooks'
 import { randomOnGrid } from 'Helpers'
 import { useHazardMove } from 'Hooks/useHazardMove'
 
 export const Board = () => {
+  const reset = useRecoilValue(resetGameAtom)
   const bounds = useRecoilValue(boundsSelector)
   const gridSize = useRecoilValue(gridSizeAtom)
   const backgroundStyles = {
@@ -51,8 +49,6 @@ export const Board = () => {
   const [, setOppositeGoalPos] = usePlacePiece('goal', 'opposite')
   const [, setHeroHazardPos] = usePlacePiece('hazard', 'hero')
   const [, setOppositeHazardPos] = usePlacePiece('hazard', 'opposite')
-  const sparkSide = useRecoilValue(sparkSideAtom)
-  const [, setSparkPos] = usePlacePiece('spark', sparkSide)
 
   const horizontalWall = useRecoilValue(wallHorizontalAtom)
   const wallPos = useRecoilValue(wallPositionSelector)
@@ -69,7 +65,6 @@ export const Board = () => {
     setOppositeGoalPos()
     setHeroHazardPos()
     setOppositeHazardPos()
-    setSparkPos()
     setWallHolePos(() => {
       const posTest = (test: boolean) =>
         test ? heroPos[axis] : oppositePos[axis]
@@ -81,7 +76,7 @@ export const Board = () => {
         : { x: wallPos.x, y: coord }
       return position
     })
-  }, [])
+  }, [reset])
 
   useMove()
   useHazardMove()
@@ -97,18 +92,18 @@ export const Board = () => {
     >
       <WallPiece />
       <WallHolePiece />
-      <HeroGoalPiece />
-      <OppositeGoalPiece />
-      {!heroInHouse && <HeroPiece />}
-      {!oppositeInHouse && <OppositePiece />}
-      {!heroHasItem && <HeroItem />}
-      {!oppositeHasItem && <OppositeItem />}
-      <HeroHazardPiece />
-      <OppositeHazardPiece />
-      {/* <SparkPiece /> */}
+      <GoalPiece side="hero" />
+      <GoalPiece side="opposite" />
+      {!heroInHouse && <CharacterPiece side="hero" />}
+      {!oppositeInHouse && <CharacterPiece side="opposite" />}
+      {!heroHasItem && <ItemPiece side="opposite" />}
+      {!oppositeHasItem && <ItemPiece side="hero" />}
+      <HazardPiece side="hero" />
+      <HazardPiece side="opposite" />
     </div>
   )
 }
 
 // TODO: second wall and hole?
 // TODO: health counters for hero and opposite? 2hp? 2 hits before death and game over
+// TODO: hazards only move when it can see you?

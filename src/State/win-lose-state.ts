@@ -1,5 +1,5 @@
 import { inSameSpace } from 'Helpers'
-import { selector } from 'recoil'
+import { atom, selector } from 'recoil'
 import { pieceEntersHouseAtom, piecePositionAtom } from './pieces-state'
 
 export const winConditionSelector = selector({
@@ -14,6 +14,7 @@ export const winConditionSelector = selector({
 export const loseConditionSelector = selector({
   key: 'loseConditionSelector',
   get: ({ get }) => {
+    const gameIsReady = get(readyGameSelector)
     const heroPos = get(piecePositionAtom({ kind: 'character', side: 'hero' }))
     const oppositePos = get(
       piecePositionAtom({ kind: 'character', side: 'opposite' }),
@@ -30,7 +31,7 @@ export const loseConditionSelector = selector({
     const oppositeTouchedHazard =
       inSameSpace(oppositePos, heroHazardPos) ||
       inSameSpace(oppositePos, oppositeHazardPos)
-    return heroTouchedHazard || oppositeTouchedHazard
+    return gameIsReady && (heroTouchedHazard || oppositeTouchedHazard)
   },
 })
 
@@ -43,4 +44,9 @@ export const readyGameSelector = selector({
     )
     return !(heroPos.x === oppositePos.x && heroPos.y === oppositePos.y)
   },
+})
+
+export const resetGameAtom = atom({
+  key: 'resetGame',
+  default: true,
 })

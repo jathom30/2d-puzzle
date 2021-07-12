@@ -5,12 +5,11 @@ import { useRecoilValue } from 'recoil'
 import { moveCountAtom } from 'State'
 import {
   loseConditionSelector,
-  readyGameSelector,
   winConditionSelector,
 } from 'State/win-lose-state'
+import { EndScreen } from 'Components/EndScreen'
 
 export const BoardView = () => {
-  const gameIsReady = useRecoilValue(readyGameSelector)
   const moveCount = useRecoilValue(moveCountAtom)
   const winCondition = useRecoilValue(winConditionSelector)
   const loseCondition = useRecoilValue(loseConditionSelector)
@@ -19,12 +18,6 @@ export const BoardView = () => {
     <div className="BoardView">
       <div className="BoardView__header">
         <BackButton />
-        {gameIsReady && winCondition && (
-          <span className="BoardView__count">You Win</span>
-        )}
-        {gameIsReady && loseCondition && (
-          <span className="BoardView__count">You Lose</span>
-        )}
         <span className="BoardView__count">
           Move Count: <strong>{moveCount}</strong>
         </span>
@@ -32,6 +25,9 @@ export const BoardView = () => {
       <div className="BoardView__body">
         <Board />
       </div>
+      {(loseCondition || winCondition) && (
+        <EndScreen message={winCondition ? 'You Win!' : 'Game Over'} />
+      )}
     </div>
   )
 }
