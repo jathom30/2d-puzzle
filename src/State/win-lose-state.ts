@@ -15,6 +15,8 @@ export const loseConditionSelector = selector({
   key: 'loseConditionSelector',
   get: ({ get }) => {
     const gameIsReady = get(readyGameSelector)
+    const heroInHouse = get(pieceEntersHouseAtom('hero'))
+    const oppositeInHouse = get(pieceEntersHouseAtom('opposite'))
     const heroPos = get(piecePositionAtom({ kind: 'character', side: 'hero' }))
     const oppositePos = get(
       piecePositionAtom({ kind: 'character', side: 'opposite' }),
@@ -26,11 +28,13 @@ export const loseConditionSelector = selector({
       piecePositionAtom({ kind: 'hazard', side: 'opposite' }),
     )
     const heroTouchedHazard =
-      inSameSpace(heroPos, heroHazardPos) ||
-      inSameSpace(heroPos, oppositeHazardPos)
+      !heroInHouse &&
+      (inSameSpace(heroPos, heroHazardPos) ||
+        inSameSpace(heroPos, oppositeHazardPos))
     const oppositeTouchedHazard =
-      inSameSpace(oppositePos, heroHazardPos) ||
-      inSameSpace(oppositePos, oppositeHazardPos)
+      !oppositeInHouse &&
+      (inSameSpace(oppositePos, heroHazardPos) ||
+        inSameSpace(oppositePos, oppositeHazardPos))
     return gameIsReady && (heroTouchedHazard || oppositeTouchedHazard)
   },
 })

@@ -1,5 +1,5 @@
 import React from 'react'
-import { BackButton, Board } from 'Components'
+import { BackButton, Board, Button } from 'Components'
 import './BoardView.scss'
 import { useRecoilValue } from 'recoil'
 import { moveCountAtom } from 'State'
@@ -8,8 +8,10 @@ import {
   winConditionSelector,
 } from 'State/win-lose-state'
 import { EndScreen } from 'Components/EndScreen'
+import { useReset } from 'Hooks'
 
 export const BoardView = () => {
+  const resetGame = useReset()
   const moveCount = useRecoilValue(moveCountAtom)
   const winCondition = useRecoilValue(winConditionSelector)
   const loseCondition = useRecoilValue(loseConditionSelector)
@@ -21,6 +23,7 @@ export const BoardView = () => {
         <span className="BoardView__count">
           Move Count: <strong>{moveCount}</strong>
         </span>
+        <Button onClick={resetGame}>Reset Game</Button>
       </div>
       <div className="BoardView__body">
         <Board />

@@ -12,7 +12,7 @@ export const usePlacePiece = (
   side: 'hero' | 'opposite',
 ): [PositionType, () => void] => {
   // TODO update this
-  const voidPos = useRecoilValue(voidPositionsSelector('hero'))
+  const voidPos = useRecoilValue(voidPositionsSelector(side))
   const setPiece = useSetRecoilState(piecePositionAtom({ kind, side }))
   const position = useRecoilValue(positionSelector(side))
   const finalPos = checkSpace(voidPos, position)

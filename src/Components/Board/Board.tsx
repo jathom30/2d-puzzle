@@ -104,6 +104,4 @@ export const Board = () => {
   )
 }
 
-// TODO: second wall and hole?
-// TODO: health counters for hero and opposite? 2hp? 2 hits before death and game over
-// TODO: hazards only move when it can see you?
+// TODO: hazards multiply depending on screen size
