@@ -126,16 +126,16 @@ export const GoalPiece: React.FC<{ side: SideType }> = ({ side }) => {
   const goal = useRecoilValue(pieceEmojiAtom('goal'))
   const heroHasItem = useRecoilValue(pieceHasItemAtom('hero'))
   const oppositeHasItem = useRecoilValue(pieceHasItemAtom('opposite'))
-  const hasItem = heroHasItem && oppositeHasItem
+  const hasItems = heroHasItem && oppositeHasItem
   return (
     <Piece
       left={x}
       top={y}
-      className={`Goal ${side.substring(0, 1).toUpperCase()}${side.substring(
-        1,
-      )}`}
+      className={`Goal ${!hasItems ? 'Goal--is-locked' : ''} ${side
+        .substring(0, 1)
+        .toUpperCase()}${side.substring(1)}`}
       emoji={goal}
-      item={!hasItem ? '🔒' : ''}
+      item={!hasItems ? '🔒' : ''}
     />
   )
 }
