@@ -2,11 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
 import './Select.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faChevronDown,
-  faCheck,
-  faTimes,
-} from '@fortawesome/free-solid-svg-icons'
+import { faChevronDown, faCheck } from '@fortawesome/free-solid-svg-icons'
 import { useOnClickOutside } from 'Hooks'
 
 export type SelectOptionType = {
