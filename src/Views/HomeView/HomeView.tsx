@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import image from 'Assets/dont_get_caught.png'
+import { Madlib } from 'Components'
 import './HomeView.scss'
 
 export const HomeView = () => {
@@ -9,7 +10,9 @@ export const HomeView = () => {
       <div className="HomeView__hero-img">
         <img src={image} alt="logo" />
       </div>
-      <h1 className="HomeView__title">Get Home Safe!</h1>
+      <div className="HomeView__madlib">
+        <Madlib />
+      </div>
       <div className="HomeView__routes">
         <Link className="HomeView__route" to="/board">
           Play

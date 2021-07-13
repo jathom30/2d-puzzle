@@ -101,7 +101,8 @@ export const CharacterPiece: React.FC<{ side: SideType }> = ({ side }) => {
     piecePositionAtom({ kind: 'character', side }),
   )
   const hasItem = useRecoilValue(pieceHasItemAtom(side))
-  const emoji = useRecoilValue(pieceEmojiAtom(side))
+  const emoji = useRecoilValue(pieceEmojiAtom('character'))
+  const item = useRecoilValue(pieceEmojiAtom('item'))
   return (
     <Piece
       left={x}
@@ -110,19 +111,21 @@ export const CharacterPiece: React.FC<{ side: SideType }> = ({ side }) => {
         .substring(0, 1)
         .toUpperCase()}${side.substring(1)}`}
       emoji={emoji}
-      item={hasItem ? '🔑' : ''}
+      item={hasItem ? item : ''}
     />
   )
 }
 
 export const ItemPiece: React.FC<{ side: SideType }> = ({ side }) => {
+  const item = useRecoilValue(pieceEmojiAtom('item'))
   const { x, y } = useRecoilValue(piecePositionAtom({ kind: 'item', side }))
   const otherSide = side === 'hero' ? 'Opposite' : 'Hero'
-  return <Piece left={x} top={y} className={`Item ${otherSide}`} emoji="🔑" />
+  return <Piece left={x} top={y} className={`Item ${otherSide}`} emoji={item} />
 }
 
 export const GoalPiece: React.FC<{ side: SideType }> = ({ side }) => {
   const { x, y } = useRecoilValue(piecePositionAtom({ kind: 'goal', side }))
+  const goal = useRecoilValue(pieceEmojiAtom('goal'))
   return (
     <Piece
       left={x}
@@ -130,7 +133,7 @@ export const GoalPiece: React.FC<{ side: SideType }> = ({ side }) => {
       className={`Goal ${side.substring(0, 1).toUpperCase()}${side.substring(
         1,
       )}`}
-      emoji="🏠"
+      emoji={goal}
     />
   )
 }

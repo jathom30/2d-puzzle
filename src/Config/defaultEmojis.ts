@@ -1,5 +1,6 @@
 export const defaultPieces: { [key: string]: string } = {
-  hero: '🕵️‍♂️',
-  opposite: '🕵️‍♀️',
+  character: '🕵️‍♂️',
+  item: '🔑',
+  goal: '🏠',
   hazard: '🧟‍♂️',
 }

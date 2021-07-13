@@ -103,3 +103,4 @@ export const Board = () => {
 }
 
 // TODO: hazards multiply depending on screen size
+// TODO: madlibs style set up: a _____ and a _______ have to find their ______s before they can go to the _______ while avoiding _________

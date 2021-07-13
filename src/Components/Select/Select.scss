@@ -1,0 +1,124 @@
+@import 'src/tokens';
+@import 'src/mixins';
+@import 'src/input-variables';
+
+.Select {
+  &__select {
+    @include focus-ring;
+    height: $input-height-m;
+    color: $text-on-white--subdued;
+    border: $border-width-default solid $text-on-white--subdued;
+    border-radius: $border-radius-m;
+    display: flex;
+    align-items: center;
+    padding: 0 0.5rem;
+    cursor: default;
+    &:hover {
+      border-color: $text-on-white;
+    }
+    &:focus {
+      @include focus-ring;
+    }
+    &--has-value {
+      color: $text-on-white;
+    }
+  }
+  &__label {
+    margin-right: auto;
+  }
+  &__clear-button {
+    all: unset;
+    height: 1.25rem;
+    width: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0.5rem;
+    cursor: pointer;
+    border-radius: $border-radius-s;
+    pointer-events: all;
+
+    @include focus-ring;
+    &:hover {
+      background-color: $color-grey-100;
+      color: $text-on-grey-100;
+    }
+  }
+  &__toggle-mark {
+    height: 1rem;
+    width: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0.5rem;
+  }
+  &__options {
+    color: $text-on-white--subdued;
+    border: $border-width-thin solid $color-grey-200;
+    box-shadow: $box-shadow-400;
+    border-radius: $border-radius-m;
+    padding: 0.25rem;
+    position: fixed;
+    background-color: $color-white;
+    pointer-events: auto;
+    overflow-y: auto;
+  }
+  &__option {
+    background: white;
+    font-size: 2rem;
+    line-height: 1rem;
+    padding: 0.25rem;
+    border-radius: $border-radius-s;
+    cursor: default;
+    &:focus {
+      box-shadow: $focus-ring;
+    }
+    &:focus-visible {
+      position: relative;
+      z-index: 1;
+    }
+    &:not(:last-child) {
+      margin-bottom: $pixels-2;
+    }
+  }
+  &__is-selected-mark {
+    margin-right: 0.25rem;
+    opacity: 0;
+  }
+}
+
+.Select--is-open {
+  .Select {
+    &__toggle-mark {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+// .Select__option:hover {
+//   background-color: $color-grey-050;
+//   color: $text-on-grey-050;
+//   .Select {
+//     &__is-selected-mark {
+//       opacity: 1;
+//       color: $color-grey-200;
+//     }
+//   }
+// }
+
+.Select__option--is-selected {
+  background-color: $color-grey-100;
+  color: $text-on-grey-100;
+  .Select__is-selected-mark {
+    opacity: 1;
+    color: $text-on-grey-100;
+  }
+  // &.Select__option:hover {
+  //   background-color: $color-grey-200;
+  //   color: $text-on-grey-200;
+  //   .Select__is-selected-mark {
+  //     opacity: 1;
+  //     color: $text-on-grey-200;
+  //   }
+  // }
+}
