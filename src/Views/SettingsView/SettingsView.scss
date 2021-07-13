@@ -1,4 +1,8 @@
 .SettingsView {
+  max-width: 75vw;
+  min-width: 300px;
+  margin: 0 auto;
+  padding: 2rem 0;
   &__top-bar {
     height: calc(var(--height) * 2);
     display: flex;
@@ -6,121 +10,21 @@
     justify-content: space-between;
     margin-bottom: 1rem;
   }
-  &__container {
-    max-width: 75vw;
-    min-width: 300px;
-    margin: 0 auto;
-    padding: 2rem 0;
-    .label-container {
-      color: white;
-      margin-bottom: 1rem;
-      font-weight: bold;
-      font-size: 1.5rem;
-    }
-    .wrapper-container {
-      display: grid;
-      gap: 1rem;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      .rule-wrapper {
-        padding: 1rem;
-        background: white;
-        border-radius: .25rem;
-        p {
-          font-weight: bold;
-        }
-        .rules-rule {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 1rem;
-          .wrapper-rules {}
-          
-        }
-      }
-    }
-  }
-}
-
-.EmojiSelect {
-  font-size: 3rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
-  gap: .5rem;
   &__label {
-    border-radius: 1rem;
-    text-align: center;
-    cursor: pointer;
-    input {
-      opacity: 0;
-      max-width: 0;
-      max-height: 0;
-      width: 0;
-      margin: 0;
-    }
-    &--is-selected {
-      box-shadow: 0 0 0 2px var(--color);
-    }
-    &--is-unselectable {
-      opacity: .5;
-      pointer-events: none;
-    }
-    &:hover {
-      background: rgba(black,.1);
-    }
-  }
-}
-
-.ItemCheckbox {
-  display: flex;
-  &__wrapper-label {
-    display: flex;
-    align-items: center;
-    width: max-content;
-    max-width: 100%;
-    cursor: pointer;
-    padding: 0.25rem;
-    padding-left: 0.375rem;
-    padding-right: 0.75rem;
-    border-radius: .25rem;
-    &:hover {
-      background-color: rgba(grey,.125);
-    }
-  }
-  &__input-wrapper {
-    min-width: 1rem;
-    height: 1rem;
-    border: 1px solid grey;
-    margin-right: 0.5rem;
-    border-radius: .25rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-  }
-  &__input {
-    width: 0;
-    height: 0;
-    position: absolute;
-  }
-  &__checkmark {
-    height: 30%;
-    width: 60%;
-    border: 2px solid white;
-    border-top: none;
-    border-right: none;
-    transform: translateY(-20%) rotate(-45deg);
-    display: none;
-  }
-  &__label {
-    max-width: 100%;
+    color: white;
+    margin-bottom: 1rem;
+    font-weight: bold;
     font-size: 1.5rem;
   }
-}
-
-.ItemCheckbox--checked .ItemCheckbox {
-  &__input-wrapper {
-    background-color: var(--color);
+  &__wrapper {
+    background: white;
+    border-radius: .25rem;
+    padding: 1rem;
   }
-  &__checkmark {
-    display: block;
+  &__input {
+    span {
+      margin-right: 1rem;
+      font-weight: bold;
+    }
   }
 }

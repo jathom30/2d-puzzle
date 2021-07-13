@@ -1,4 +1,5 @@
-import React, { ReactNode } from 'react'
+import { useHazardMove, usePlacePiece } from 'Hooks'
+import React, { ReactNode, useEffect } from 'react'
 import { useRecoilValue } from 'recoil'
 import {
   gridSizeAtom,
@@ -138,14 +139,21 @@ export const GoalPiece: React.FC<{ side: SideType }> = ({ side }) => {
   )
 }
 
-export const HazardPiece: React.FC<{ side: SideType }> = ({ side }) => {
-  const { x, y } = useRecoilValue(piecePositionAtom({ kind: 'hazard', side }))
+export const HazardPiece: React.FC<{ id: string }> = ({ id }) => {
+  const [{ x, y }, setPos] = usePlacePiece(id)
   const radius = useRecoilValue(hazardRadiusSelector)
   const emoji = useRecoilValue(pieceEmojiAtom('hazard'))
   const boundaryStyles = {
     width: radius * 2,
     height: radius * 2,
   }
+
+  useHazardMove(id)
+
+  useEffect(() => {
+    setPos()
+  }, [])
+
   return (
     <Piece
       left={x}

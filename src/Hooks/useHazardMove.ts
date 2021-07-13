@@ -6,9 +6,10 @@ import {
   withinRadius,
 } from 'Helpers'
 import { useEffect } from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import {
   gridSizeAtom,
+  hazardPositionAtom,
   hazardRadiusSelector,
   nearestCharacterSelector,
   pieceEntersHouseAtom,
@@ -17,15 +18,10 @@ import {
 } from 'State'
 import { PositionType, SideType } from 'Types'
 
-export const useHazardMove = () => {
+export const useHazardMove = (id: string) => {
   const gridSize = useRecoilValue(gridSizeAtom)
   const hazardRadius = useRecoilValue(hazardRadiusSelector)
-  const [heroHazardPos, setHeroHazardPos] = useRecoilState(
-    piecePositionAtom({ kind: 'hazard', side: 'hero' }),
-  )
-  const [oppositeHazardPos, setOppositeHazardPos] = useRecoilState(
-    piecePositionAtom({ kind: 'hazard', side: 'opposite' }),
-  )
+  const setHazardPos = useSetRecoilState(hazardPositionAtom(id))
   const heroPos = useRecoilValue(
     piecePositionAtom({ kind: 'character', side: 'hero' }),
   )
@@ -40,10 +36,8 @@ export const useHazardMove = () => {
     piecePositionAtom({ kind: 'character', side: 'opposite' }),
   )
   const oppositeInHouse = useRecoilValue(pieceEntersHouseAtom('opposite'))
-  const heroHazardAggro = useRecoilValue(nearestCharacterSelector('hero'))
-  const oppositeHazardAggro = useRecoilValue(
-    nearestCharacterSelector('opposite'),
-  )
+  const hazardAggro = useRecoilValue(nearestCharacterSelector(id))
+
   const heroGoalPos = useRecoilValue(
     piecePositionAtom({ kind: 'goal', side: 'hero' }),
   )
@@ -137,14 +131,6 @@ export const useHazardMove = () => {
   }
 
   useEffect(() => {
-    setHeroHazardPos((prevPos) =>
-      handleMove(prevPos, heroHazardAggro, [oppositeHazardPos]),
-    )
-  }, [heroPos, oppositePos])
-
-  useEffect(() => {
-    setOppositeHazardPos((prevPos) =>
-      handleMove(prevPos, oppositeHazardAggro, [heroHazardPos]),
-    )
+    setHazardPos((prevPos) => handleMove(prevPos, hazardAggro, []))
   }, [heroPos, oppositePos])
 }

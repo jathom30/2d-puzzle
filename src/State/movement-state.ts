@@ -2,7 +2,11 @@ import { getDistanceBetween } from 'Helpers'
 import { atom, selector, selectorFamily } from 'recoil'
 import { PositionType, SideType } from 'Types'
 import { gridSizeAtom } from './board-state'
-import { pieceHasItemAtom, piecePositionAtom } from './pieces-state'
+import {
+  hazardPositionAtom,
+  pieceHasItemAtom,
+  piecePositionAtom,
+} from './pieces-state'
 import {
   wallDimensionsSelector,
   wallHolePositionAtom,
@@ -78,12 +82,13 @@ export const voidPositionsSelector = selectorFamily<PositionType[], SideType>({
     },
 })
 
-export const nearestCharacterSelector = selectorFamily<SideType, SideType>({
+export const nearestCharacterSelector = selectorFamily<SideType, string>({
   key: 'nearestCharacterSelector',
   get:
-    (side) =>
+    (id) =>
     ({ get }) => {
-      const hazardPos = get(piecePositionAtom({ kind: 'hazard', side }))
+      const hazardPos = get(hazardPositionAtom(id))
+      // const hazardPos = get(piecePositionAtom({ kind: 'hazard', side }))
       const heroPos = get(
         piecePositionAtom({ kind: 'character', side: 'hero' }),
       )

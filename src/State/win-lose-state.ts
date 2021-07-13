@@ -1,6 +1,12 @@
 import { inSameSpace } from 'Helpers'
 import { atom, selector } from 'recoil'
-import { pieceEntersHouseAtom, piecePositionAtom } from './pieces-state'
+import { PositionType } from 'Types'
+import {
+  hazardIdsSelector,
+  hazardPositionAtom,
+  pieceEntersHouseAtom,
+  piecePositionAtom,
+} from './pieces-state'
 
 export const winConditionSelector = selector({
   key: 'winConditionSelector',
@@ -21,20 +27,12 @@ export const loseConditionSelector = selector({
     const oppositePos = get(
       piecePositionAtom({ kind: 'character', side: 'opposite' }),
     )
-    const heroHazardPos = get(
-      piecePositionAtom({ kind: 'hazard', side: 'hero' }),
-    )
-    const oppositeHazardPos = get(
-      piecePositionAtom({ kind: 'hazard', side: 'opposite' }),
-    )
-    const heroTouchedHazard =
-      !heroInHouse &&
-      (inSameSpace(heroPos, heroHazardPos) ||
-        inSameSpace(heroPos, oppositeHazardPos))
-    const oppositeTouchedHazard =
-      !oppositeInHouse &&
-      (inSameSpace(oppositePos, heroHazardPos) ||
-        inSameSpace(oppositePos, oppositeHazardPos))
+    const hazardIds = get(hazardIdsSelector)
+    const hazardPositions = hazardIds.map((id) => get(hazardPositionAtom(id)))
+    const isOnHazard = (charPos: PositionType) =>
+      hazardPositions.some((pos) => inSameSpace(pos, charPos))
+    const heroTouchedHazard = !heroInHouse && isOnHazard(heroPos)
+    const oppositeTouchedHazard = !oppositeInHouse && isOnHazard(oppositePos)
     return gameIsReady && (heroTouchedHazard || oppositeTouchedHazard)
   },
 })
@@ -46,7 +44,7 @@ export const readyGameSelector = selector({
     const oppositePos = get(
       piecePositionAtom({ kind: 'character', side: 'opposite' }),
     )
-    return !(heroPos.x === oppositePos.x && heroPos.y === oppositePos.y)
+    return !inSameSpace(heroPos, oppositePos)
   },
 })
 

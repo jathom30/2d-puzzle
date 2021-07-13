@@ -3,6 +3,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil'
 import {
   boundsSelector,
   gridSizeAtom,
+  hazardIdsSelector,
   pieceEntersHouseAtom,
   pieceHasItemAtom,
   resetGameAtom,
@@ -21,10 +22,9 @@ import {
 import './Board.scss'
 import { useMove, usePlacePiece } from 'Hooks'
 import { randomOnGrid } from 'Helpers'
-import { useHazardMove } from 'Hooks/useHazardMove'
 
 export const Board = () => {
-  const reset = useRecoilValue(resetGameAtom)
+  // const reset = useRecoilValue(resetGameAtom)
   const bounds = useRecoilValue(boundsSelector)
   const gridSize = useRecoilValue(gridSizeAtom)
   const backgroundStyles = {
@@ -34,19 +34,31 @@ export const Board = () => {
     }px, ${gridSize * -1}px 0px`,
   }
 
+  const hazardIds = useRecoilValue(hazardIdsSelector)
+
   const heroHasItem = useRecoilValue(pieceHasItemAtom('hero'))
   const oppositeHasItem = useRecoilValue(pieceHasItemAtom('opposite'))
   const heroInHouse = useRecoilValue(pieceEntersHouseAtom('hero'))
   const oppositeInHouse = useRecoilValue(pieceEntersHouseAtom('opposite'))
 
-  const [heroPos, setHeroPos] = usePlacePiece('character', 'hero')
-  const [oppositePos, setOppositePos] = usePlacePiece('character', 'opposite')
-  const [, setHeroItemPos] = usePlacePiece('item', 'hero')
-  const [, setOppositeItemPos] = usePlacePiece('item', 'opposite')
-  const [, setHeroGoalPos] = usePlacePiece('goal', 'hero')
-  const [, setOppositeGoalPos] = usePlacePiece('goal', 'opposite')
-  const [, setHeroHazardPos] = usePlacePiece('hazard', 'hero')
-  const [, setOppositeHazardPos] = usePlacePiece('hazard', 'opposite')
+  const [heroPos, setHeroPos] = usePlacePiece({
+    kind: 'character',
+    side: 'hero',
+  })
+  const [oppositePos, setOppositePos] = usePlacePiece({
+    kind: 'character',
+    side: 'opposite',
+  })
+  const [, setHeroItemPos] = usePlacePiece({ kind: 'item', side: 'hero' })
+  const [, setOppositeItemPos] = usePlacePiece({
+    kind: 'item',
+    side: 'opposite',
+  })
+  const [, setHeroGoalPos] = usePlacePiece({ kind: 'goal', side: 'hero' })
+  const [, setOppositeGoalPos] = usePlacePiece({
+    kind: 'goal',
+    side: 'opposite',
+  })
 
   const horizontalWall = useRecoilValue(wallHorizontalAtom)
   const wallPos = useRecoilValue(wallPositionSelector)
@@ -61,8 +73,6 @@ export const Board = () => {
     setOppositeItemPos()
     setHeroGoalPos()
     setOppositeGoalPos()
-    setHeroHazardPos()
-    setOppositeHazardPos()
     setWallHolePos(() => {
       const posTest = (test: boolean) =>
         test ? heroPos[axis] : oppositePos[axis]
@@ -74,10 +84,9 @@ export const Board = () => {
         : { x: wallPos.x, y: coord }
       return position
     })
-  }, [reset])
+  }, [])
 
   useMove()
-  useHazardMove()
 
   return (
     <div
@@ -96,11 +105,14 @@ export const Board = () => {
       {!oppositeInHouse && <CharacterPiece side="opposite" />}
       {!heroHasItem && <ItemPiece side="opposite" />}
       {!oppositeHasItem && <ItemPiece side="hero" />}
-      <HazardPiece side="hero" />
-      <HazardPiece side="opposite" />
+      {hazardIds.map((id) => (
+        <HazardPiece id={id} key={id} />
+      ))}
+      {/* <HazardPiece side="hero" />
+      <HazardPiece side="opposite" /> */}
     </div>
   )
 }
 
-// TODO: hazards multiply depending on screen size
-// TODO: madlibs style set up: a _____ and a _______ have to find their ______s before they can go to the _______ while avoiding _________
+// TODO: resize board on resize
+// TODO: reset fix

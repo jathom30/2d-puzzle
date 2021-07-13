@@ -1,8 +1,8 @@
 import React from 'react'
 import { BackButton, Board, Button } from 'Components'
 import './BoardView.scss'
-import { useRecoilValue } from 'recoil'
-import { moveCountAtom } from 'State'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import { hazardCountAtom, moveCountAtom } from 'State'
 import {
   loseConditionSelector,
   winConditionSelector,
@@ -15,11 +15,28 @@ export const BoardView = () => {
   const moveCount = useRecoilValue(moveCountAtom)
   const winCondition = useRecoilValue(winConditionSelector)
   const loseCondition = useRecoilValue(loseConditionSelector)
+  const [hazardCount, setHazardCount] = useRecoilState(hazardCountAtom)
 
   return (
     <div className="BoardView">
       <div className="BoardView__header">
         <BackButton />
+        <div className="BoardView__hazard-count">
+          <Button
+            onClick={() =>
+              setHazardCount((prevCount) => {
+                if (prevCount === 0) return prevCount
+                return prevCount - 1
+              })
+            }
+          >
+            -
+          </Button>
+          <span>Enemy Count ({hazardCount})</span>
+          <Button onClick={() => setHazardCount((prevCount) => prevCount + 1)}>
+            +
+          </Button>
+        </div>
         <span className="BoardView__count">
           Move Count: <strong>{moveCount}</strong>
         </span>

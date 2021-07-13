@@ -2,7 +2,9 @@ import { defaultPieces } from 'Config'
 import { generateSpace } from 'Helpers'
 import { atomFamily, selector, selectorFamily } from 'recoil'
 import { PositionType, SideType } from 'Types'
+import { v4 as uuid } from 'uuid'
 import { gridCountSelector, gridSizeAtom } from './board-state'
+import { hazardCountAtom } from './settings-state'
 import { wallHorizontalAtom, wallPositionSelector } from './wall-state'
 
 export const pieceHasItemAtom = atomFamily<boolean, SideType>({
@@ -47,7 +49,12 @@ export const piecePositionAtom = atomFamily<
   { kind: string; side: SideType }
 >({
   key: 'piecePosition',
-  default: { x: 0, y: 0 },
+  default: { x: -1, y: -1 },
+})
+
+export const hazardPositionAtom = atomFamily<PositionType, string>({
+  key: 'hazardPosition',
+  default: { x: -2, y: -2 },
 })
 
 export const hazardRadiusSelector = selector({
@@ -55,5 +62,14 @@ export const hazardRadiusSelector = selector({
   get: ({ get }) => {
     const gridSize = get(gridSizeAtom)
     return gridSize * 5
+  },
+})
+
+export const hazardIdsSelector = selector({
+  key: 'hazardIdsSelector',
+  get: ({ get }) => {
+    const count = get(hazardCountAtom)
+    const ids = Array.from({ length: count }, () => uuid())
+    return ids
   },
 })

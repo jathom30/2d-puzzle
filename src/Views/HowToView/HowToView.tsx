@@ -32,19 +32,16 @@ export const HowToView = () => {
           </div>
           <div className="HowToView__group">
             <p className="HowToView__main">
-              Each character&apos;s avatar, key, and house are color-coded
+              Each character&apos;s avatar, item, and goal are color-coded
             </p>
             <p>
-              Navagate each character to pick up their keys. Then, guide each
-              character to their house all while avoiding any bad guys.
+              Navagate each character to pick up their items. Then, guide each
+              character to their goal all while avoiding any bad guys.
             </p>
           </div>
           <div className="HowToView__group">
             <p className="HowToView__main">How to Win:</p>
-            <p>
-              Land each character (with their keys) on their house at the same
-              time.
-            </p>
+            <p>Land each character (with their item) on their goal.</p>
           </div>
           <div className="HowToView__group">
             <p className="HowToView__main">How to Lose:</p>
