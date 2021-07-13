@@ -65,7 +65,6 @@ export const Madlib = () => {
   return (
     <div className="Madlib">
       <span>Two</span>
-      <Spacer />
       <Select
         placeholder="select characters"
         options={createOptions(characterChoices)}
@@ -75,7 +74,6 @@ export const Madlib = () => {
       />
       <Spacer />
       <span>have to find their</span>
-      <Spacer />
       <Select
         placeholder="select items"
         options={createOptions(itemChoices)}
@@ -85,7 +83,6 @@ export const Madlib = () => {
       />
       <Spacer />
       <span>before they can safely escape into their</span>
-      <Spacer />
       <Select
         placeholder="select items"
         options={createOptions(goalChoices)}
@@ -95,7 +92,6 @@ export const Madlib = () => {
       />
       <Spacer />
       <span>while avoiding the</span>
-      <Spacer />
       <Select
         placeholder="select items"
         options={createOptions(hazardChoices)}
