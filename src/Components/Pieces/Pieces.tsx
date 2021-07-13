@@ -38,14 +38,14 @@ export const Piece: React.FC<{
   const defaultStyles = {
     height: gridSize,
     width: gridSize,
-    fontSize: gridSize,
-    lineHeight: gridSize,
+    fontSize: gridSize * 0.75,
+    lineHeight: gridSize * 0.75,
   }
   const itemStyles = {
     width: gridSize / 2,
     height: gridSize / 2,
-    fontSize: gridSize,
-    lineHeight: `${gridSize}px`,
+    fontSize: gridSize * 0.65,
+    lineHeight: `${gridSize * 0.65}px`,
   }
   return (
     <div
@@ -59,7 +59,7 @@ export const Piece: React.FC<{
       }}
     >
       {before}
-      <span>{emoji}</span>
+      <span style={{ zIndex: 1 }}>{emoji}</span>
       <span className="Piece__item" style={itemStyles}>
         {item}
       </span>
