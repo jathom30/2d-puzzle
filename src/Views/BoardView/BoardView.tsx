@@ -46,7 +46,7 @@ export const BoardView = () => {
         <Board />
       </div>
       {(loseCondition || winCondition) && (
-        <EndScreen message={winCondition ? 'You Win!' : 'Game Over'} />
+        <EndScreen message={winCondition ? 'You Won!' : 'Game Over'} />
       )}
     </div>
   )

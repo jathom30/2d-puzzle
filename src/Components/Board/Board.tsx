@@ -83,4 +83,3 @@ export const Board = () => {
 }
 
 // TODO: resize board on resize
-// TODO: reset fix
