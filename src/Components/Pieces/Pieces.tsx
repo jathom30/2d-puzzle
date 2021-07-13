@@ -1,11 +1,10 @@
 import { useHazardMove, usePlacePiece } from 'Hooks'
-import React, { ReactNode, useEffect } from 'react'
+import React, { ReactNode } from 'react'
 import { useRecoilValue } from 'recoil'
 import {
   gridSizeAtom,
   wallDimensionsSelector,
   wallPositionSelector,
-  piecePositionAtom,
   pieceEmojiAtom,
   wallHolePositionAtom,
   pieceHasItemAtom,
@@ -98,9 +97,7 @@ export const WallHolePiece = () => {
 }
 
 export const CharacterPiece: React.FC<{ side: SideType }> = ({ side }) => {
-  const { x, y } = useRecoilValue(
-    piecePositionAtom({ kind: 'character', side }),
-  )
+  const { x, y } = usePlacePiece({ kind: 'character', side })
   const hasItem = useRecoilValue(pieceHasItemAtom(side))
   const emoji = useRecoilValue(pieceEmojiAtom('character'))
   const item = useRecoilValue(pieceEmojiAtom('item'))
@@ -119,14 +116,17 @@ export const CharacterPiece: React.FC<{ side: SideType }> = ({ side }) => {
 
 export const ItemPiece: React.FC<{ side: SideType }> = ({ side }) => {
   const item = useRecoilValue(pieceEmojiAtom('item'))
-  const { x, y } = useRecoilValue(piecePositionAtom({ kind: 'item', side }))
+  const { x, y } = usePlacePiece({ kind: 'item', side })
   const otherSide = side === 'hero' ? 'Opposite' : 'Hero'
   return <Piece left={x} top={y} className={`Item ${otherSide}`} emoji={item} />
 }
 
 export const GoalPiece: React.FC<{ side: SideType }> = ({ side }) => {
-  const { x, y } = useRecoilValue(piecePositionAtom({ kind: 'goal', side }))
+  const { x, y } = usePlacePiece({ kind: 'goal', side })
   const goal = useRecoilValue(pieceEmojiAtom('goal'))
+  const heroHasItem = useRecoilValue(pieceHasItemAtom('hero'))
+  const oppositeHasItem = useRecoilValue(pieceHasItemAtom('opposite'))
+  const hasItem = heroHasItem && oppositeHasItem
   return (
     <Piece
       left={x}
@@ -135,24 +135,20 @@ export const GoalPiece: React.FC<{ side: SideType }> = ({ side }) => {
         1,
       )}`}
       emoji={goal}
+      item={!hasItem ? '🔒' : ''}
     />
   )
 }
 
 export const HazardPiece: React.FC<{ id: string }> = ({ id }) => {
-  const [{ x, y }, setPos] = usePlacePiece(id)
+  const { x, y } = usePlacePiece(id)
   const radius = useRecoilValue(hazardRadiusSelector)
   const emoji = useRecoilValue(pieceEmojiAtom('hazard'))
   const boundaryStyles = {
     width: radius * 2,
     height: radius * 2,
   }
-
   useHazardMove(id)
-
-  useEffect(() => {
-    setPos()
-  }, [])
 
   return (
     <Piece

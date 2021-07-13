@@ -66,7 +66,9 @@ export const voidPositionsSelector = selectorFamily<PositionType[], SideType>({
         piecePositionAtom({ kind: 'character', side: 'opposite' }),
       )
 
-      const hasItem = get(pieceHasItemAtom(side))
+      const hasHeroItem = get(pieceHasItemAtom('hero'))
+      const hasOppositeItem = get(pieceHasItemAtom('opposite'))
+      const hasItem = hasHeroItem && hasOppositeItem
       const goalPos = get(piecePositionAtom({ kind: 'goal', side }))
       const otherSide = side === 'hero' ? 'opposite' : 'hero'
       const otherGoalPos = get(

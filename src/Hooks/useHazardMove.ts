@@ -131,6 +131,8 @@ export const useHazardMove = (id: string) => {
   }
 
   useEffect(() => {
-    setHazardPos((prevPos) => handleMove(prevPos, hazardAggro, []))
-  }, [heroPos, oppositePos])
+    setHazardPos((prevPos) => {
+      return handleMove(prevPos, hazardAggro, [])
+    })
+  }, [heroPos])
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import { BackButton, Board, Button } from 'Components'
 import './BoardView.scss'
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import { hazardCountAtom, moveCountAtom } from 'State'
 import {
   loseConditionSelector,

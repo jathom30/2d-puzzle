@@ -163,6 +163,7 @@ export const useMove = () => {
   }, [oppositePos, oppositeItemPos])
 
   // check if character enters house
+  // can only enter house if both chars have their items
   useEffect(() => {
     if (gameIsReady && inSameSpace(heroPos, heroGoalPos)) {
       setHeroInHouse(true)

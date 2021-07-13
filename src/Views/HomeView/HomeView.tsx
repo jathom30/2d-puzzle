@@ -20,9 +20,9 @@ export const HomeView = () => {
         <Link className="HomeView__route" to="/how-to">
           How to
         </Link>
-        <Link className="HomeView__route" to="/settings">
+        {/* <Link className="HomeView__route" to="/settings">
           Settings
-        </Link>
+        </Link> */}
       </div>
     </div>
   )
