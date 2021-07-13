@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { BackButton, Button } from 'Components'
 import './EndScreen.scss'
 import { useReset } from 'Hooks'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilValue } from 'recoil'
 import { hazardCountAtom, moveCountAtom } from 'State'
 
 export const EndScreen: React.FC<{ message: string }> = ({ message }) => {
