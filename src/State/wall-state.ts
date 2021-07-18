@@ -1,4 +1,3 @@
-import { randomOnGrid, wallCheck } from 'Helpers'
 import { atom, selector } from 'recoil'
 import { boundsSelector, gridSizeAtom } from './board-state'
 
@@ -26,25 +25,9 @@ export const wallDimensionsSelector = selector({
   },
 })
 
-export const wallPositionSelector = selector({
-  key: 'wallPositionSelector',
-  get: ({ get }) => {
-    const horizontal = get(wallHorizontalAtom)
-    const bounds = get(boundsSelector)
-    const gridSize = get(gridSizeAtom)
-    const getMinMax = (limit: number) =>
-      (bounds[horizontal ? 'height' : 'width'] * limit) / gridSize
-    const min = Math.ceil(getMinMax(0.25))
-    const max = Math.ceil(getMinMax(0.5))
-    const x = horizontal
-      ? 0
-      : wallCheck(randomOnGrid(gridSize, max, min), bounds.width, gridSize)
-    const y = !horizontal
-      ? 0
-      : wallCheck(randomOnGrid(gridSize, max, min), bounds.height, gridSize)
-
-    return { x, y }
-  },
+export const wallPositionAtom = atom({
+  key: 'wallPosition',
+  default: { x: 0, y: 0 },
 })
 
 export const wallHolePositionAtom = atom({

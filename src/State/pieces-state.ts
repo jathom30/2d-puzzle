@@ -5,7 +5,7 @@ import { PositionType, SideType } from 'Types'
 import { v4 as uuid } from 'uuid'
 import { gridCountSelector, gridSizeAtom } from './board-state'
 import { hazardCountAtom } from './settings-state'
-import { wallHorizontalAtom, wallPositionSelector } from './wall-state'
+import { wallHorizontalAtom, wallPositionAtom } from './wall-state'
 
 export const pieceHasItemAtom = atomFamily<boolean, SideType>({
   key: 'pieceHasItem',
@@ -28,7 +28,7 @@ export const positionSelector = selectorFamily<() => PositionType, SideType>({
     (side) =>
     ({ get }) => {
       const heroSide = side === 'hero'
-      const wallPosition = get(wallPositionSelector)
+      const wallPosition = get(wallPositionAtom)
       const horizontalWall = get(wallHorizontalAtom)
       const gridSize = get(gridSizeAtom)
       const gridCount = get(gridCountSelector)
@@ -72,4 +72,9 @@ export const hazardIdsSelector = selector({
     const ids = Array.from({ length: count }, () => uuid())
     return ids
   },
+})
+
+export const positionRationAtom = atomFamily({
+  key: 'positionRatio',
+  default: { x: 0, y: 0 },
 })

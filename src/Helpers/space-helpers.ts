@@ -37,9 +37,7 @@ export const checkSpace = (
   createItem: () => PositionType,
 ): PositionType => {
   const item = createItem()
-  const sameSpace = dontBeHeres.some(
-    (location) => location.x === item.x && location.y === item.y,
-  )
+  const sameSpace = dontBeHeres.some((location) => inSameSpace(item, location))
   return sameSpace ? checkSpace(dontBeHeres, createItem) : item
 }
 

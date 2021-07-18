@@ -18,6 +18,7 @@ const characterChoices = {
 
 const itemChoices = {
   kiwis: '🥝',
+  cake: '🎂',
   strawberries: '🍓',
   drinks: '🍹',
   peaches: '🍑',

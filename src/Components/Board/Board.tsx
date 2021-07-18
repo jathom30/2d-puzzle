@@ -9,7 +9,7 @@ import {
   resetGameAtom,
   wallHolePositionAtom,
   wallHorizontalAtom,
-  wallPositionSelector,
+  wallPositionAtom,
 } from 'State'
 import {
   WallPiece,
@@ -20,8 +20,8 @@ import {
   HazardPiece,
 } from 'Components'
 import './Board.scss'
-import { useMove } from 'Hooks'
-import { randomOnGrid } from 'Helpers'
+import { useMove, useResizeBounds } from 'Hooks'
+import { createWallPos, randomOnGrid } from 'Helpers'
 
 export const Board = () => {
   const reset = useRecoilValue(resetGameAtom)
@@ -42,10 +42,12 @@ export const Board = () => {
   const oppositeInHouse = useRecoilValue(pieceEntersHouseAtom('opposite'))
 
   const horizontalWall = useRecoilValue(wallHorizontalAtom)
-  const wallPos = useRecoilValue(wallPositionSelector)
+  const setWallPos = useSetRecoilState(wallPositionAtom)
   const setWallHolePos = useSetRecoilState(wallHolePositionAtom)
 
   useEffect(() => {
+    const wallPos = createWallPos(bounds, horizontalWall, gridSize)
+    setWallPos(wallPos)
     setWallHolePos(() => {
       const max = (horizontalWall ? bounds.width : bounds.height) / gridSize
       const coord = randomOnGrid(gridSize, max, 0)
@@ -57,6 +59,7 @@ export const Board = () => {
   }, [reset])
 
   useMove()
+  useResizeBounds()
 
   return (
     <div
@@ -83,3 +86,4 @@ export const Board = () => {
 }
 
 // TODO: resize board on resize
+// TODO: touch controls on mobile

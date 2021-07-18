@@ -10,7 +10,7 @@ import {
 import {
   wallDimensionsSelector,
   wallHolePositionAtom,
-  wallPositionSelector,
+  wallPositionAtom,
 } from './wall-state'
 
 export const moveCountAtom = atom({
@@ -21,7 +21,7 @@ export const moveCountAtom = atom({
 export const voidWallSpaceSelector = selector({
   key: 'voidWallSpaceSelector',
   get: ({ get }) => {
-    const wallPos = get(wallPositionSelector)
+    const wallPos = get(wallPositionAtom)
     const wallDims = get(wallDimensionsSelector)
     const gridSize = get(gridSizeAtom)
     const getWallCoords = () => {

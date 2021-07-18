@@ -1,3 +1,6 @@
+import { DimensionsType } from 'Types'
+import { randomOnGrid } from './grid-helpers'
+
 export const wallCheck = (
   position: number,
   upperBound: number,
@@ -17,4 +20,23 @@ export const wallCheck = (
     default:
       return position
   }
+}
+
+export const createWallPos = (
+  bounds: DimensionsType,
+  horizontal: number,
+  gridSize: number,
+) => {
+  const getMinMax = (limit: number) =>
+    (bounds[horizontal ? 'height' : 'width'] * limit) / gridSize
+  const min = Math.ceil(getMinMax(0.25))
+  const max = Math.ceil(getMinMax(0.5))
+  const x = horizontal
+    ? 0
+    : wallCheck(randomOnGrid(gridSize, max, min), bounds.width, gridSize)
+  const y = !horizontal
+    ? 0
+    : wallCheck(randomOnGrid(gridSize, max, min), bounds.height, gridSize)
+
+  return { x, y }
 }

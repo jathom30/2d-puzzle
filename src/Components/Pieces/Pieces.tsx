@@ -4,11 +4,11 @@ import { useRecoilValue } from 'recoil'
 import {
   gridSizeAtom,
   wallDimensionsSelector,
-  wallPositionSelector,
   pieceEmojiAtom,
   wallHolePositionAtom,
   pieceHasItemAtom,
   hazardRadiusSelector,
+  wallPositionAtom,
 } from 'State'
 import { SideType } from 'Types'
 import './Pieces.scss'
@@ -68,7 +68,7 @@ export const Piece: React.FC<{
 }
 
 export const WallPiece = () => {
-  const wallPosition = useRecoilValue(wallPositionSelector)
+  const wallPosition = useRecoilValue(wallPositionAtom)
   const wallDimensions = useRecoilValue(wallDimensionsSelector)
 
   return (

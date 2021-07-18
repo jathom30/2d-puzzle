@@ -2,7 +2,15 @@ import { atom, selector } from 'recoil'
 
 export const gridSizeAtom = atom({
   key: 'gridSize',
-  default: 40,
+  default: 50,
+})
+
+export const windowBoundsAtom = atom({
+  key: 'windowBounds',
+  default: {
+    width: window.innerWidth,
+    height: window.innerHeight,
+  },
 })
 
 export const boundsSelector = selector({
@@ -11,9 +19,10 @@ export const boundsSelector = selector({
     const gridSize = get(gridSizeAtom)
     const gridSpan = (dim: number) => Math.floor(dim / gridSize) * gridSize
     const spacer = gridSize * 2
+    const window = get(windowBoundsAtom)
     return {
-      width: gridSpan(document.documentElement.clientWidth - spacer),
-      height: gridSpan(document.documentElement.clientHeight - spacer),
+      width: gridSpan(window.width - spacer),
+      height: gridSpan(window.height - spacer),
     }
   },
 })
