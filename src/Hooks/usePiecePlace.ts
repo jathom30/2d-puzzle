@@ -1,5 +1,5 @@
 import { get5050 } from 'Helpers'
-import { checkSpace } from 'Helpers/space-helpers'
+import { checkSpace, inSameSpace } from 'Helpers/space-helpers'
 import { useEffect } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 import {
@@ -8,6 +8,7 @@ import {
   positionSelector,
   resetGameAtom,
   voidPositionsSelector,
+  wallPositionAtom,
 } from 'State'
 import { PositionType, SideType } from 'Types'
 
@@ -17,6 +18,7 @@ interface PlacePieceType {
 }
 
 export const usePlacePiece: PlacePieceType = (param: any) => {
+  const wallPos = useRecoilValue(wallPositionAtom)
   const reset = useRecoilValue(resetGameAtom)
   const randomSide = get5050() ? 'hero' : 'opposite'
   const isHazard = typeof param === 'string'
@@ -29,7 +31,9 @@ export const usePlacePiece: PlacePieceType = (param: any) => {
   const voidPos = useRecoilValue(voidPositionsSelector(side))
   const position = useRecoilValue(positionSelector(side))
   useEffect(() => {
-    setPiece(checkSpace(voidPos, position))
-  }, [reset])
+    if (!inSameSpace(wallPos, { x: 0, y: 0 })) {
+      setPiece(checkSpace(voidPos, position))
+    }
+  }, [reset, wallPos])
   return currentPos
 }
