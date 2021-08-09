@@ -17,16 +17,18 @@ const characterChoices = {
 }
 
 const itemChoices = {
+  stethoscope: '🩺',
   kiwis: '🥝',
   cake: '🎂',
   strawberries: '🍓',
+  paperclip: '📎',
+  keys: '🔑',
   drinks: '🍹',
   peaches: '🍑',
-  bananas: '🍌',
-  eggplants: '🍆',
+  brain: '🧠',
   tomatoes: '🍅',
   peanuts: '🥜',
-  keys: '🔑',
+  bananas: '🍌',
   donuts: '🍩',
 }
 
@@ -36,6 +38,7 @@ const goalChoices = {
   policeCars: '🚓',
   boats: '🛥️',
   planes: '✈️',
+  rocket: '🚀',
 }
 
 const hazardChoices = {
