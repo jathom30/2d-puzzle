@@ -50,7 +50,7 @@ export const HowToView = () => {
         </div>
         <p className="HowToView__label">Notes</p>
         <div className="HowToView__notes">
-          <div className="HowToView__group">
+          {/* <div className="HowToView__group">
             <p className="HowToView__main">Experiment with screen/font sizes</p>
             <p>
               The game&apos;s board will update your characters position based
@@ -58,7 +58,7 @@ export const HowToView = () => {
               it might help, expand your screen to give you more wiggle room or
               shrink your screen to bring your objective to you.
             </p>
-          </div>
+          </div> */}
           <div className="HowToView__group">
             <p className="HowToView__main">Not all games are winnable</p>
             <p>
